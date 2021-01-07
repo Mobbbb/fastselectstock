@@ -50,7 +50,7 @@ export default {
     },
     methods: {
         ...mapMutations([
-            'updateSelectedStatusByKey',
+            'setTipsConfig',
         ]),
         clickItem(item) {
             this.$emit('on-select', {
@@ -61,7 +61,9 @@ export default {
         },
         clickTips() {
             const { title, content, subTips } = this.tipsConfig;
-            console.log(title, content, subTips)
+            this.setTipsConfig({
+                title, content, subTips, isShow: true,
+            });
         },
     },
     mounted() {

@@ -65,49 +65,35 @@ export default {
         ]),
         onSelect({ selectedItem, rowIndex, columnIndex }) { // 选中展开的子选择项的回调
             // 设置为选中状态，并设置选中的子选项数据
-            this.changeSelectedStatus(rowIndex, columnIndex, {
-                isSelected: true,
-                selectedItem,
-            });
+            this.changeSelectedStatus(rowIndex, columnIndex, true, selectedItem);
             // 收起展开的节点
             this.collapsePresets(rowIndex);
         },
         /**
-         * @description 点击选项，1、激活、取消激活、取消选中；2、展开或收起子选项；
+         * @description 点击选项，1、取消选中；2、展开或收起子选项；
          * @param expandItem
          * @param rowIndex
          * @param columnIndex
          */
         clickCell({ expandItem, rowIndex, columnIndex }) {
             const currentExpandKey = expandItem.value;
-            const { expandKey = "", expandIndex } = this.expandMap[`${this.groupIndex}-${rowIndex}`] || {};
+            const { expandKey = "", expandIndex: isExpand } = this.expandMap[`${this.groupIndex}-${rowIndex}`] || {};
             const { isSelected } = this.selectedMap[`${this.groupIndex}-${rowIndex}-${columnIndex}`] || {};
 
-            if (!isSelected) {
-                // 为选中状态设置初始值
-                this.changeSelectedStatus(rowIndex, columnIndex, {}, true);
-            } else {
-                //取消选中状态，点击后不执行后续的展开操作
-                this.changeSelectedStatus(rowIndex, columnIndex);
-                return;
-            }
+            // 取消选中状态
+            this.changeSelectedStatus(rowIndex, columnIndex, false);
+
+            // 若当前是选中状态，点击后不执行后续的展开操作
+            if (isSelected) return;
 
             // 展开：先显示内部节点，然后将父容器的高度更新为内部节点的高度
             // 收起：先将父容器的高度重置为收起时的高度，然后在收起动画结束后隐藏内部节点
-            if (expandKey === currentExpandKey && expandIndex) { // 收起(之前展开过)
+            if (expandKey === currentExpandKey && isExpand) { // 收起
                 this.collapsePresets(rowIndex);
                 // 隐藏展开的节点，在transitionend中进行
-            } else if (expandKey === currentExpandKey && !expandIndex) { // 展开(之前展开过)
-                // 显示展开的节点
-                this.changeExpandListsShowStatus(rowIndex, columnIndex, true);
-                // 将父容器高度更新为展开后的高度
-                this.setHeightByRowIndexNextTick(rowIndex);
-            } else { // 首次的展开
+            } else { // 展开
                 // 显示展开的节点，并设置展开的数据
-                this.changeExpandListsShowStatus(rowIndex, columnIndex, true, {
-                    firstExpand: true,
-                    expandItem,
-                });
+                this.changeExpandListsShowStatus(rowIndex, columnIndex, true, expandItem);
                 // 将父容器高度更新为展开后的高度
                 this.setHeightByRowIndexNextTick(rowIndex);
             }
@@ -132,14 +118,13 @@ export default {
          * @description 变更选中状态
          * @param rowIndex
          * @param columnIndex
-         * @param selectedConfig = {
-         *      status 是否选中，若status为true，则selectedItem必传
-         *      selectedItem 选中的数据内容
-         * }
-         * @param firstClick 是否是首次点击，默认为false
+         * @param isSelected 是否选中，若为true，则selectedItem必传
+         * @param selectedItem 选中的数据内容
          */
-        changeSelectedStatus(rowIndex, columnIndex, selectedConfig = {}, firstClick = false) {
-            const { isSelected = false, selectedItem = {} } = selectedConfig;
+        changeSelectedStatus(rowIndex, columnIndex, isSelected, selectedItem = {}) {
+            const { isSelected: tempValue } = this.selectedMap[`${this.groupIndex}-${rowIndex}-${columnIndex}`] || {};
+            const firstClick = typeof tempValue === 'undefined';
+
             if (firstClick) {
                 // 首次点击，设置初始值
                 let newSelectedMap = Object.assign({}, this.selectedMap);
@@ -160,20 +145,19 @@ export default {
          * @description 显示或隐藏展开的节点
          * @param rowIndex
          * @param columnIndex
-         * @param status
-         * @param expandConfig = {
-         *      firstExpand 是否是首次展开，默认为false，若为true，expandItem必填
-         *      expandItem 展开的数据内容
-         * }
+         * @param isExpand 是否展开，若为true，expandItem必填
+         * @param expandItem 展开的数据内容
          */
-        changeExpandListsShowStatus(rowIndex, columnIndex, status, expandConfig = {}) {
-            this.isCollapsed = false; // 重置收起中的信号
-            let newExpandMap = Object.assign({}, this.expandMap);
-            const { firstExpand = false, expandItem = {} } = expandConfig;
+        changeExpandListsShowStatus(rowIndex, columnIndex, isExpand, expandItem = {}) {
             const { children = [], value, label = "", remark = "" } = expandItem;
+            const { expandKey } = this.expandMap[`${this.groupIndex}-${rowIndex}`] || {};
+            const changeExpandItem = value !== expandKey;
 
-            if (firstExpand) {
-                // 设置展开数据并更新展开状态
+            this.isCollapsed = false; // 重置收起中的信号
+
+            if (changeExpandItem) {
+                // 切换了展开的单元，设置展开数据并更新展开状态
+                let newExpandMap = Object.assign({}, this.expandMap);
                 newExpandMap[`${this.groupIndex}-${rowIndex}`] = {
                     expandLists: divideListIntoGroups(children, LIMIT_NUM_EACH_LINE),
                     tipsConfig: {
@@ -181,7 +165,7 @@ export default {
                         content: remark,
                         subTips: children,
                     },
-                    expandIndex: status ? columnIndex : status,
+                    expandIndex: isExpand ? columnIndex : isExpand,
                     expandKey: value,
                     columnIndex
                 };
@@ -190,7 +174,7 @@ export default {
                 // 更新展开状态
                 this.updateExpandStatusByKey({
                     key: `${this.groupIndex}-${rowIndex}`,
-                    expandIndex: status ? columnIndex : status,
+                    expandIndex: isExpand ? columnIndex : isExpand,
                     columnIndex,
                 });
             }

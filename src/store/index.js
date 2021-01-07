@@ -7,6 +7,8 @@ export default new Vuex.Store({
 	state: {
 		expandMap: {}, // 条件选股展开列表的集合, key值格式为『分组的索引-行索引』
 		selectedMap: {}, // 选中的条件的集合, key值格式为『分组的索引-行索引-列索引』
+
+		tipsConfig: {}, // 解释弹窗的数据
 	},
 	mutations: {
 		setExpandMap(state, map) {
@@ -22,6 +24,12 @@ export default new Vuex.Store({
 		updateExpandStatusByKey(state, { key, expandIndex, columnIndex }) {
 			state.expandMap[key].expandIndex = expandIndex;
 			state.expandMap[key].columnIndex = columnIndex;
+		},
+		setTipsConfig(state, config) {
+			state.tipsConfig = config;
+		},
+		changeTipsLayerShowStatus(state, status) {
+			state.tipsConfig.isShow = status;
 		},
 	},
 	actions: {

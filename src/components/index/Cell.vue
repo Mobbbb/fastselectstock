@@ -1,7 +1,7 @@
 <template>
     <div class="selection-item" :class="isSelected || isActive ? 'selected-item' : ''" @click="clickItem">
-        <div>{{item.label}}</div>
-        <div>{{selectedItem.label}}</div>
+        <div class="item-title">{{item.label}}</div>
+        <div class="selected-title" v-if="isSelected">{{selectedItem.label}}</div>
     </div>
 </template>
 
@@ -9,7 +9,7 @@
 import { mapState, mapMutations } from 'vuex';
 
 export default {
-    name: 'two-level-tree',
+    name: 'selection-item',
     props: {
         item: Object,
         groupIndex: String,
@@ -61,17 +61,28 @@ export default {
 <style scoped>
     .selection-item{
         height: 46px;
-        line-height: 46px;
         background: #f7f8fa;
         border-radius: 4px;
         text-align: center;
         font-size: 14px;
         box-sizing: border-box;
         display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
     .selected-item{
         color: #e93030;
         border: 1px solid #E93030;
         background: #fff5f5;
+    }
+    .item-title{
+        height: 16px;
+        line-height: 16px;
+    }
+    .selected-title{
+        height: 14px;
+        line-height: 14px;
+        font-size: 12px;
+        margin-top: 2px;
     }
 </style>
