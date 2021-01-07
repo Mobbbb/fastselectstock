@@ -3,7 +3,11 @@
         <div class="selection-groups" v-for="(item, index) in originTreeData">
             <div class="secondary-title">{{item.label}}</div>
 
-            <TwoLevelTree v-if="item.deepestLevel === 2" :rows="item.rows" :groupIndex="String(index)"></TwoLevelTree>
+            <TwoLevelTree v-if="item.deepestLevel === 2"
+                          :rows="item.rows"
+                          :groupIndex="String(index)"
+                          class="two-level-tree">
+            </TwoLevelTree>
 
             <ThreeLevelTree v-if="item.deepestLevel === 3" :treeData="item.children" :index="index"></ThreeLevelTree>
 
@@ -141,10 +145,14 @@ export default {
         padding: 0 12px;
     }
     .selection-groups{
-        margin-bottom: 24px;
+        padding-bottom: 4px;
     }
     .secondary-title{
         font-size: 17px;
         font-weight: bold;
+        padding-bottom: 16px;
+    }
+    .two-level-tree{
+        padding-bottom: 8px;
     }
 </style>

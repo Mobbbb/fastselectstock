@@ -29,10 +29,13 @@ export default {
 	.three-level-tree{
 
 	}
+	.secondary-selection-groups{
+		padding-bottom: 8px;
+	}
 	.third-title{
 		font-size: 16px;
 		color: #595959;
 		line-height: 16px;
-		margin-top: 16px;
+		padding-bottom: 16px;
 	}
 </style>

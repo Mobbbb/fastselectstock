@@ -221,6 +221,6 @@ export default {
         overflow: hidden;
     }
     .selection-row-wrap{
-        padding-top: 12px;
+        padding-bottom: 12px;
     }
 </style>

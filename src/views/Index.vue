@@ -40,6 +40,9 @@ export default {
 <style scoped>
 	.home-index{
 		padding: 0 12px;
+        height: 100%;
+        overflow: scroll;
+        -webkit-overflow-scrolling: touch;
 	}
 	.mianze{
 		word-break: break-all;

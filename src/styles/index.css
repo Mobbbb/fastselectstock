@@ -32,6 +32,7 @@ body {
 	-webkit-text-size-adjust:none;
 	-moz-text-size-adjust:none;
     color: #262626;
+    font-size: 14px;
 }
 
 a{text-decoration: none;}
@@ -51,4 +52,8 @@ textarea{
 	outline:none medium;
 	-webkit-tap-highlight-color: rgba(0,0,0,0);
 	-moz-tap-highlight-color: rgba(0,0,0,0);
+}
+
+body,html {
+    height: 100%;
 }
