@@ -9,7 +9,7 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex';
-import PopView from '@/components/base/PopView.vue';
+import PopView from '_c/components/base/PopView.vue';
 
 export default {
     name: 'tips-layer',

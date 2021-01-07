@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { findComponentUpward } from '@/libs/util';
+import { findComponentUpward } from '_c/libs/util';
 import "./style.config.css";
 
 export default {

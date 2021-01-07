@@ -9,8 +9,8 @@
 
 <script>
 import { mapState } from 'vuex';
-import SelectionTree from '@/components/index/SelectionTree.vue';
-import TipsLayer from '@/components/index/TipsLayer.vue';
+import SelectionTree from '_c/components/index/SelectionTree.vue';
+import TipsLayer from '_c/components/index/TipsLayer.vue';
 
 export default {
     name: 'index',

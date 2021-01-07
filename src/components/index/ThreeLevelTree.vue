@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import TwoLevelTree from '@/components/index/TwoLevelTree.vue';
+import TwoLevelTree from '_c/components/index/TwoLevelTree.vue';
 
 export default {
     name: 'three-level-tree',

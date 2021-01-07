@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { findComponentDownward, findBrothersComponents } from '@/libs/util';
+import { findComponentDownward, findBrothersComponents } from '_c/libs/util';
 
 export default {
     name: 'Row',

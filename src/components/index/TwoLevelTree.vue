@@ -24,12 +24,12 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex';
-import { LIMIT_NUM_EACH_LINE } from '@/config';
-import { divideListIntoGroups } from '@/libs/util';
-import ExpandSelections from '@/components/index/ExpandSelections.vue';
-import Cell from '@/components/index/Cell.vue';
-import Row from '@/components/grid/Row.vue';
-import Col from '@/components/grid/Col.vue';
+import { LIMIT_NUM_EACH_LINE } from '_c/config';
+import { divideListIntoGroups } from '_c/libs/util';
+import ExpandSelections from '_c/components/index/ExpandSelections.vue';
+import Cell from '_c/components/index/Cell.vue';
+import Row from '_c/components/grid/Row.vue';
+import Col from '_c/components/grid/Col.vue';
 
 export default {
     name: 'two-level-tree',

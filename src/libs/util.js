@@ -153,3 +153,10 @@ export function findBrothersComponents (context, componentName, exceptMe = true)
     if (exceptMe) res.splice(index, 1);
     return res;
 }
+
+export const setRem = () => {
+    const htmlWidth = document.documentElement.clientWidth || document.body.clientWidth;
+    let htmlDom = document.getElementsByTagName('html')[0];
+
+    htmlDom.style.fontSize = htmlWidth / 15 + 'px';
+};

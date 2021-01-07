@@ -14,8 +14,8 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex';
-import Row from '@/components/grid/Row.vue';
-import Col from '@/components/grid/Col.vue';
+import Row from '_c/components/grid/Row.vue';
+import Col from '_c/components/grid/Col.vue';
 
 export default {
     name: 'expand-selections',

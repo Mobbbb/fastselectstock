@@ -12,10 +12,10 @@
 </template>
 
 <script>
-import { list, SPACE_MAP, LIMIT_NUM_EACH_LINE, NOT_LEAF_MAP } from '@/config';
-import { treeDataTranslate, calcStrSpaceWidth, getMapSection, divideListIntoGroups } from '@/libs/util';
-import TwoLevelTree from '@/components/index/TwoLevelTree.vue';
-import ThreeLevelTree from '@/components/index/ThreeLevelTree.vue';
+import { list, SPACE_MAP, LIMIT_NUM_EACH_LINE, NOT_LEAF_MAP } from '_c/config';
+import { treeDataTranslate, calcStrSpaceWidth, getMapSection, divideListIntoGroups } from '_c/libs/util';
+import TwoLevelTree from '_c/components/index/TwoLevelTree.vue';
+import ThreeLevelTree from '_c/components/index/ThreeLevelTree.vue';
 
 export default {
     name: 'index',
