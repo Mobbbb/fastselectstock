@@ -158,6 +158,7 @@ export default {
             if (changeExpandItem) {
                 // 切换了展开的单元，设置展开数据并更新展开状态
                 let newExpandMap = Object.assign({}, this.expandMap);
+                children.sort((a, b) => a.sort - b.sort); // 按sort字段对展开列表进行排序
                 newExpandMap[`${this.groupIndex}-${rowIndex}`] = {
                     expandLists: divideListIntoGroups(children, LIMIT_NUM_EACH_LINE),
                     tipsConfig: {

@@ -3,9 +3,9 @@
         <div class="selection-groups" v-for="(item, index) in originTreeData">
             <div class="secondary-title">{{item.label}}</div>
 
-            <TwoLevelTree v-if="item.deepestLevel === 1" :rows="item.rows" :groupIndex="String(index)"></TwoLevelTree>
+            <TwoLevelTree v-if="item.deepestLevel === 2" :rows="item.rows" :groupIndex="String(index)"></TwoLevelTree>
 
-            <ThreeLevelTree v-if="item.deepestLevel === 2" :treeData="item.children" :index="index"></ThreeLevelTree>
+            <ThreeLevelTree v-if="item.deepestLevel === 3" :treeData="item.children" :index="index"></ThreeLevelTree>
 
         </div>
     </div>
@@ -13,7 +13,7 @@
 
 <script>
 import { list, SPACE_MAP, LIMIT_NUM_EACH_LINE, NOT_LEAF_MAP } from '_c/config';
-import { treeDataTranslate, calcStrSpaceWidth, getMapSection, divideListIntoGroups } from '_c/libs/util';
+import { treeDataTranslate, calcStrSpaceWidth, getMapSection, divideListIntoGroups, sortTreeListData } from '_c/libs/util';
 import TwoLevelTree from '_c/components/index/TwoLevelTree.vue';
 import ThreeLevelTree from '_c/components/index/ThreeLevelTree.vue';
 
@@ -28,8 +28,6 @@ export default {
             leavesNodes: [], // 叶子节点（即展开项）
             originListsExceptLeaves: [], // 除叶子节点之外的节点
             originTreeData: [],
-            tempLevel: 1,
-            breakOffRecursion: false,
         }
     },
     computed: {
@@ -65,7 +63,6 @@ export default {
 
             // 获取叶子节点的父亲
             this.originListsExceptLeaves.forEach(item => {
-                item.deepestLevel = 1;
                 this.leavesNodes.forEach(cell => {
                     if (cell.parents === item.value && !leavesParents.includes(item)) {
                         leavesParents.push(item);
@@ -99,44 +96,42 @@ export default {
             });
         },
         /**
-         * @description 初始数据处理
-         */
-        formatTreeData () {
-            this.splitTreeData(list.data.tree);
-
-            this.groupingRowData();
-
-            this.originTreeData = treeDataTranslate(this.originListsExceptLeaves);
-
-            this.setTreeDeepestLevel();
-        },
-        /**
          * @description 深度遍历直到达到最深层级
          */
-        getTreeDeepestLevel(lists) {
-            for (let i = 0; i < lists.length; i++) {
-                if (lists[i].children && !this.breakOffRecursion) {
-                    this.tempLevel ++;
-                    this.getTreeDeepestLevel(lists[i].children);
-                } else {
-                    this.breakOffRecursion = true;
-                }
+        getTreeDeepestLevel(lists, tempLevel) {
+            const isLegal = lists instanceof Array && lists.length;
+            if (isLegal && lists[0].children) {
+                return this.getTreeDeepestLevel(lists[0].children, tempLevel + 1);
             }
+            return tempLevel;
         },
         /**
          * @description 为最外层节点设置当前节点的最深层级数
          */
         setTreeDeepestLevel() {
+            let deepestLevel = 1;
             this.originTreeData.forEach(item => {
-                this.tempLevel = 1;
-                this.breakOffRecursion = false;
-                this.getTreeDeepestLevel(item.children);
-                item.deepestLevel = this.tempLevel;
+                deepestLevel ++;
+                item.deepestLevel = this.getTreeDeepestLevel(item.children, deepestLevel);
+                deepestLevel = 1;
             });
         },
     },
     mounted() {
-        this.formatTreeData();
+        // 将树结构拆分为，叶子节点和非叶子节点的列表结构
+        this.splitTreeData(list.data.tree);
+
+        // 将非叶子节点按sort字段与兄弟节点排序
+        this.originListsExceptLeaves = sortTreeListData(this.originListsExceptLeaves);
+
+        // 将非叶子节点的最后一级按字符串长度进行分行，3个单位长度为一行
+        this.groupingRowData();
+
+        // 将列表结构变为树形结构
+        this.originTreeData = treeDataTranslate(this.originListsExceptLeaves);
+
+        // 为最外层节点设置该节点的深度
+        this.setTreeDeepestLevel();
     },
 }
 </script>

@@ -102,6 +102,34 @@ export function divideListIntoGroups(lists, limitNumEachLine) {
 }
 
 /**
+ * @description 对无级树按兄弟节点进行排序
+ * @param list
+ * @returns {[]}
+ */
+export function sortTreeListData(list) {
+    const tempList = [];
+    const brotherlyNodesMap = {};
+
+    // 以父节点为key，将兄弟节点分组
+    list.forEach(item => {
+        if (!brotherlyNodesMap[item.parents]) {
+            brotherlyNodesMap[item.parents] = [];
+        }
+        brotherlyNodesMap[item.parents].push(item);
+    });
+
+    Object.keys(brotherlyNodesMap).forEach(key => {
+        // 按sort字段对兄弟节点进行排序
+        brotherlyNodesMap[key] = brotherlyNodesMap[key].sort((a, b) => a.sort - b.sort);
+        brotherlyNodesMap[key].forEach(item => {
+            tempList.push(item);
+        });
+    });
+
+    return tempList;
+}
+
+/**
  * @description 根据上下文向上寻找componentNames
  */
 export function findComponentUpward (context, componentName, componentNames) {
