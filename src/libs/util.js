@@ -1,3 +1,5 @@
+import { EXPAND_MAX_LINE } from '_c/config';
+
 /**
  * @param {Array} data 对象数组
  * @param {String} id 自身标识
@@ -99,6 +101,19 @@ export function divideListIntoGroups(lists, limitNumEachLine) {
     });
 
     return rows;
+}
+
+/**
+ * @description 截断溢出的行数，并将末尾元素替换成 more
+ * @param divideResult
+ * @param more
+ * @returns {[]}
+ */
+export function sliceExpandRows(divideResult, more) {
+    let sliceResult = divideResult.slice(0, EXPAND_MAX_LINE);
+    sliceResult[EXPAND_MAX_LINE - 1].pop();
+    sliceResult[EXPAND_MAX_LINE - 1].push(more);
+    return  sliceResult;
 }
 
 /**

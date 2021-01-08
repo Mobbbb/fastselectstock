@@ -23,9 +23,8 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex';
-import { LIMIT_NUM_EACH_LINE } from '_c/config';
-import { divideListIntoGroups } from '_c/libs/util';
+import { mapState, mapMutations, mapActions } from 'vuex';
+import { SELECTION_TYPE_MAP } from '_c/config';
 import ExpandSelections from '_c/components/index/ExpandSelections.vue';
 import Cell from '_c/components/index/Cell.vue';
 import Row from '_c/components/grid/Row.vue';
@@ -58,16 +57,44 @@ export default {
     },
     methods: {
         ...mapMutations([
-            'setExpandMap',
+            'updateExpandData',
             'setSelectedMap',
             'updateExpandStatusByKey',
             'updateSelectedMapByKey',
+            'showRangeInput',
         ]),
+        ...mapActions([
+            'updateExpandData',
+        ]),
+        /**
+         * @description 点击展开的选项
+         * @param expandItem
+         * @param rowIndex
+         * @param columnIndex
+         */
         onSelect({ selectedItem, rowIndex, columnIndex }) { // 选中展开的子选择项的回调
-            // 设置为选中状态，并设置选中的子选项数据
-            this.changeSelectedStatus(rowIndex, columnIndex, true, selectedItem);
-            // 收起展开的节点
-            this.collapsePresets(rowIndex);
+            if (selectedItem.type === SELECTION_TYPE_MAP.INPUT) {
+                // 展示自定义区间范围输入弹框
+                this.showRangeInput({
+                    selectedItem,
+                    confirmCallback: (value1, value2) => {
+                        // 设置自定义输入框输入的数据
+                        selectedItem.value1 = value1;
+                        selectedItem.value2 = value2;
+                        // 设置为选中状态，并设置选中的子选项数据
+                        this.changeSelectedStatus(rowIndex, columnIndex, true, selectedItem);
+                        // 收起展开的节点
+                        this.collapsePresets(rowIndex);
+                    },
+                });
+            } else if (selectedItem.type === SELECTION_TYPE_MAP.SELECT) {
+                // 设置为选中状态，并设置选中的子选项数据
+                this.changeSelectedStatus(rowIndex, columnIndex, true, selectedItem);
+                // 收起展开的节点
+                this.collapsePresets(rowIndex);
+            } else if (selectedItem.type === SELECTION_TYPE_MAP.MORE_AREA) {
+
+            }
         },
         /**
          * @description 点击选项，1、取消选中；2、展开或收起子选项；
@@ -149,28 +176,20 @@ export default {
          * @param expandItem 展开的数据内容
          */
         changeExpandListsShowStatus(rowIndex, columnIndex, isExpand, expandItem = {}) {
-            const { children = [], value, label = "", remark = "" } = expandItem;
+            const { value } = expandItem;
             const { expandKey } = this.expandMap[`${this.groupIndex}-${rowIndex}`] || {};
             const changeExpandItem = value !== expandKey;
 
             this.isCollapsed = false; // 重置收起中的信号
 
             if (changeExpandItem) {
-                // 切换了展开的单元，设置展开数据并更新展开状态
-                let newExpandMap = Object.assign({}, this.expandMap);
-                children.sort((a, b) => a.sort - b.sort); // 按sort字段对展开列表进行排序
-                newExpandMap[`${this.groupIndex}-${rowIndex}`] = {
-                    expandLists: divideListIntoGroups(children, LIMIT_NUM_EACH_LINE),
-                    tipsConfig: {
-                        title: label,
-                        content: remark,
-                        subTips: children,
-                    },
+                // 更新展开数据
+                this.updateExpandData({
+                    key: `${this.groupIndex}-${rowIndex}`,
                     expandIndex: isExpand ? columnIndex : isExpand,
-                    expandKey: value,
-                    columnIndex
-                };
-                this.setExpandMap(newExpandMap);
+                    columnIndex,
+                    expandItem,
+                });
             } else {
                 // 更新展开状态
                 this.updateExpandStatusByKey({

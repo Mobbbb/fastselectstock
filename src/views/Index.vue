@@ -4,6 +4,7 @@
 		<div class="mianze">免责声明：xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</div>
 
         <TipsLayer v-if="tipsConfig.isShow"></TipsLayer>
+        <InputLayer v-if="rangeInputConfig.isShow"></InputLayer>
     </div>
 </template>
 
@@ -11,12 +12,14 @@
 import { mapState } from 'vuex';
 import SelectionTree from '_c/components/index/SelectionTree.vue';
 import TipsLayer from '_c/components/index/TipsLayer.vue';
+import InputLayer from '_c/components/index/InputLayer.vue';
 
 export default {
     name: 'index',
 	components: {
 		SelectionTree,
         TipsLayer,
+        InputLayer,
 	},
     data() {
     	return {
@@ -26,6 +29,7 @@ export default {
     computed: {
         ...mapState([
             'tipsConfig',
+            'rangeInputConfig',
         ]),
     },
     methods: {

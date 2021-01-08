@@ -246,6 +246,16 @@ export const list = {
 								"value": "10",
 								"parents": "5fdc6e40ecf760015576f0640"
 							},
+							{
+								"remark": "*取值范围-457.90到406.15",
+								"label": "自定义",
+								"sort": 3,
+								"type": "input",
+								"value": "111231321",
+								"parents": "5fdc6e40ecf760015576f0640",
+								"unit": "倍",
+								"recommend": "推荐值：0-30|市盈率在0-30范围内，股价处于低估值区域",
+							},
 						],
 					},
 					{
@@ -390,58 +400,16 @@ export const list = {
 						"remark": "",
 						"label": "市场",
 						"sort": 1,
-						"type": "",
-						"value": "5fdc6e40ecf760015576f064",
+						"type": "expand-api",
+						"value": "5fdc6e40ecf760015576f064555",
 						"parents": "5fdc6e40ecf760015576f062",
-						"children": [
-							{
-								"remark": "",
-								"label": "行业2",
-								"sort": 2,
-								"type": "",
-								"value": "5fdc6e40ecf760015576f0661",
-								"parents": "5fdc6e40ecf760015576f064"
-							},
-							{
-								"remark": "",
-								"label": "行业1",
-								"sort": 1,
-								"type": "",
-								"value": "5fdc6e40ecf760015576f0662",
-								"parents": "5fdc6e40ecf760015576f064"
-							},
-							{
-								"remark": "",
-								"label": "行业3",
-								"sort": 3,
-								"type": "",
-								"value": "5fdc6e40ecf760015576f0663",
-								"parents": "5fdc6e40ecf760015576f064"
-							},
-							{
-								"remark": "",
-								"label": "行业4",
-								"sort": 4,
-								"type": "",
-								"value": "5fdc6e40ecf760015576f0664",
-								"parents": "5fdc6e40ecf760015576f064"
-							},
-							{
-								"remark": "",
-								"label": "行业5",
-								"sort": 5,
-								"type": "",
-								"value": "5fdc6e40ecf760015576f0665",
-								"parents": "5fdc6e40ecf760015576f064"
-							}
-						]
 					},
 					{
 						"remark": "",
 						"label": "行业",
 						"sort": 3,
 						"type": "expand-api",
-						"value": "5fdc6e40ecf760015576f066",
+						"value": "5fdc6e40ecf760015576f06666666",
 						"parents": "5fdc6e40ecf760015576f062"
 					},
 					{
@@ -449,7 +417,7 @@ export const list = {
 						"label": "地区",
 						"sort": 2,
 						"type": "expand-static",
-						"value": "5fdc6e40ecf760015576f068",
+						"value": "5fdc6e40ecf760015576f06877777",
 						"parents": "5fdc6e40ecf760015576f062"
 					}
 				],
@@ -471,7 +439,7 @@ export const list = {
 								"parents": "5fdc6e40ecf760015576f079",
 								"children": [
 									{
-										"remark": " 指白线(或红线)上穿黄线 ",
+										"remark": " 指以K线从下向上与D线交叉为例，K线上穿D线并形成有效的向上突破是金叉，为买入信号 ",
 										"label": "金叉",
 										"sort": 1,
 										"type": "",
@@ -479,7 +447,7 @@ export const list = {
 										"parents": "5fdc6e40ecf760015576f07b"
 									},
 									{
-										"remark": " 指白线(或红线)两次上穿黄线 ",
+										"remark": " 二次金叉指形成两次金叉的过程 ",
 										"label": "二次金叉",
 										"sort": 2,
 										"type": "",
@@ -487,7 +455,7 @@ export const list = {
 										"parents": "5fdc6e40ecf760015576f07b"
 									},
 									{
-										"remark": "死叉",
+										"remark": "指以K线从上向下与D线交叉为例，K线下穿D线并形成有效的向下突破是死叉，为卖出信号",
 										"label": "死叉",
 										"sort": 3,
 										"type": "",
@@ -556,6 +524,238 @@ export const SPACE_MAP = new Map([
   	[3, [29, 100000]],
 ]);
 
-export const LIMIT_NUM_EACH_LINE = 3;
+export const MORE_AREA = {
+	"label": "更多地区",
+	"spaceWidth": 1,
+	"value": "-1",
+	"type": "more-area",
+};
+
+export const MORE_INDUSTRY = {
+	"label": "更多行业",
+	"spaceWidth": 1,
+	"value": "-2",
+	"type": "more-industry",
+};
+
+export const EXPAND_MAX_LINE = 6; // 展开的最大行数
+
+export const LIMIT_NUM_EACH_LINE = 3; // 一行的单元格个数
 
 export const NOT_LEAF_MAP = ['expand-api', 'expand-static'];
+
+export const SELECTION_TYPE_MAP = {
+	"EXPAND_API": "expand-api",
+	"EXPAND_STATIC": "expand-static",
+	"INPUT": "input",
+	"SELECT": "select",
+	"MORE_AREA": "more-area",
+	"MORE_INDUSTRY": "more-industry",
+};
+
+export const AREA_DATA = [
+	{
+		"label": "北京市",
+		"spaceWidth": 1,
+		"value": "0",
+		"type": "select"
+	},
+	{
+		"label": "天津市",
+		"spaceWidth": 1,
+		"value": "1",
+		"type": "select"
+	},
+	{
+		"label": "上海市",
+		"spaceWidth": 1,
+		"value": "2",
+		"type": "select"
+	},
+	{
+		"label": "重庆市",
+		"spaceWidth": 1,
+		"value": "3",
+		"type": "select"
+	},
+	{
+		"label": "河北省",
+		"spaceWidth": 1,
+		"value": "4",
+		"type": "select"
+	},
+	{
+		"label": "山西省",
+		"spaceWidth": 1,
+		"value": "5",
+		"type": "select"
+	},
+	{
+		"label": "内蒙古",
+		"spaceWidth": 1,
+		"value": "6",
+		"type": "select"
+	},
+	{
+		"label": "辽宁省",
+		"spaceWidth": 1,
+		"value": "7",
+		"type": "select"
+	},
+	{
+		"label": "吉林省",
+		"spaceWidth": 1,
+		"value": "8",
+		"type": "select"
+	},
+	{
+		"label": "黑龙江省",
+		"spaceWidth": 1,
+		"value": "9",
+		"type": "select"
+	},
+	{
+		"label": "江苏省",
+		"spaceWidth": 1,
+		"value": "10",
+		"type": "select"
+	},
+	{
+		"label": "浙江省",
+		"spaceWidth": 1,
+		"value": "11",
+		"type": "select"
+	},
+	{
+		"label": "安徽省",
+		"spaceWidth": 1,
+		"value": "12",
+		"type": "select"
+	},
+	{
+		"label": "福建省",
+		"spaceWidth": 1,
+		"value": "13",
+		"type": "select"
+	},
+	{
+		"label": "江西省",
+		"spaceWidth": 1,
+		"value": "14",
+		"type": "select"
+	},
+	{
+		"label": "山东省",
+		"spaceWidth": 1,
+		"value": "15",
+		"type": "select"
+	},
+	{
+		"label": "河南省",
+		"spaceWidth": 1,
+		"value": "16",
+		"type": "select"
+	},
+	{
+		"label": "湖北省",
+		"spaceWidth": 1,
+		"value": "17",
+		"type": "select"
+	},
+	{
+		"label": "湖南省",
+		"spaceWidth": 1,
+		"value": "18",
+		"type": "select"
+	},
+	{
+		"label": "广东省",
+		"spaceWidth": 1,
+		"value": "19",
+		"type": "select"
+	},
+	{
+		"label": "广西",
+		"spaceWidth": 1,
+		"value": "20",
+		"type": "select"
+	},
+	{
+		"label": "海南省",
+		"spaceWidth": 1,
+		"value": "21",
+		"type": "select"
+	},
+	{
+		"label": "四川省",
+		"spaceWidth": 1,
+		"value": "22",
+		"type": "select"
+	},
+	{
+		"label": "贵州省",
+		"spaceWidth": 1,
+		"value": "23",
+		"type": "select"
+	},
+	{
+		"label": "云南省",
+		"spaceWidth": 1,
+		"value": "24",
+		"type": "select"
+	},
+	{
+		"label": "西藏",
+		"spaceWidth": 1,
+		"value": "25",
+		"type": "select"
+	},
+	{
+		"label": "陕西省",
+		"spaceWidth": 1,
+		"value": "26",
+		"type": "select"
+	},
+	{
+		"label": "甘肃省",
+		"spaceWidth": 1,
+		"value": "27",
+		"type": "select"
+	},
+	{
+		"label": "青海省",
+		"spaceWidth": 1,
+		"value": "28",
+		"type": "select"
+	},
+	{
+		"label": "宁夏",
+		"spaceWidth": 1,
+		"value": "29",
+		"type": "select"
+	},
+	{
+		"label": "新疆",
+		"spaceWidth": 1,
+		"value": "30",
+		"type": "select"
+	},
+	{
+		"label": "香港",
+		"spaceWidth": 1,
+		"value": "31",
+		"type": "select"
+	},
+	{
+		"label": "澳门",
+		"spaceWidth": 1,
+		"value": "32",
+		"type": "select"
+	},
+	{
+		"label": "台湾省",
+		"spaceWidth": 1,
+		"value": "33",
+		"type": "select"
+	}
+];
