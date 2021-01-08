@@ -6,7 +6,7 @@
         </div>
         <Row v-for="(row, inCellRowIndex) in expandLists" :key="inCellRowIndex" :gutter="8" class="selection-atom-row-wrap">
             <Col :span="item.spaceWidth * 8" v-for="item in row" :key="item.value">
-                <div class="selection-atom-item" @click="clickItem(item)">{{item.label}}</div>
+                <ExpandCell :item="item" @on-click="clickItem"></ExpandCell>
             </Col>
         </Row>
     </div>
@@ -16,6 +16,7 @@
 import { mapState, mapMutations } from 'vuex';
 import Row from '_c/components/grid/Row.vue';
 import Col from '_c/components/grid/Col.vue';
+import ExpandCell from '_c/components/index/ExpandCell.vue';
 
 export default {
     name: 'expand-selections',
@@ -26,6 +27,7 @@ export default {
     components: {
         Row,
         Col,
+        ExpandCell,
     },
     computed: {
         ...mapState([
@@ -47,12 +49,24 @@ export default {
         isExpand() {
             return this.expandSelectionsConfig.expandIndex;
         },
+        recommend() {
+            let recommend = '';
+            const children = this.item.children || [];
+            children.forEach(item => {
+                recommend = item.recommend || '';
+            });
+            recommend = recommend.split('|') || [''];
+            recommend = recommend[0].replace('：', ':');
+
+            return recommend;
+        },
     },
     methods: {
         ...mapMutations([
             'setTipsConfig',
         ]),
         clickItem(item) {
+            item.parentTitle = this.tipsConfig.title;
             this.$emit('on-select', {
                 rowIndex: this.rowIndex,
                 columnIndex: this.columnIndex,
@@ -97,13 +111,5 @@ export default {
     }
     .selection-atom-row-wrap{
         margin-top: 12px;
-    }
-    .selection-atom-item{
-        height: 46px;
-        line-height: 46px;
-        background: #ffffff;
-        border-radius: 2px;
-        text-align: center;
-        font-size: 14px;
     }
 </style>
