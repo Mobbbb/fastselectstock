@@ -117,6 +117,17 @@ export function sliceExpandRows(divideResult, more) {
 }
 
 /**
+ * @description 深度遍历直到达到最深层级
+ */
+export function getTreeDeepestLevel(lists, tempLevel) {
+    const isLegal = lists instanceof Array && lists.length;
+    if (isLegal && lists[0].children) {
+        return getTreeDeepestLevel(lists[0].children, tempLevel + 1);
+    }
+    return tempLevel;
+}
+
+/**
  * @description 对无级树按兄弟节点进行排序
  * @param list
  * @returns {[]}

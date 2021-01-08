@@ -5,6 +5,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+import { list } from '_c/config';
 
 export default {
     name: 'App',
@@ -17,10 +19,12 @@ export default {
     	
     },
     methods: {
-    	
+        ...mapActions([
+            'initTreeData',
+        ]),
     },
     mounted() {
-
+        this.initTreeData(list);
     },
 }
 </script>
