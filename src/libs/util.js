@@ -1,4 +1,4 @@
-import { EXPAND_MAX_LINE, WAP_WEB_URL, WAP_THS_URL } from '_c/config';
+import { EXPAND_MAX_LINE, WAP_WEB_URL, WAP_THS_URL, LIMIT_NUM_EACH_LINE } from '_c/config';
 
 const httpClient = window.location.protocol;
 
@@ -66,7 +66,7 @@ export function calcStrSpaceWidth(str) {
  * ]
  * @return key: Any
  */
-export function getMapSection(num, map) {
+export function getNumFromSection(num, map) {
     for (let [key, value] of map.entries()) {
         if (num >= value[0] && num <= value[1]) {
            return key;
@@ -113,7 +113,13 @@ export function divideListIntoGroups(lists, limitNumEachLine) {
  */
 export function sliceExpandRows(divideResult, more) {
     let sliceResult = divideResult.slice(0, EXPAND_MAX_LINE);
-    sliceResult[EXPAND_MAX_LINE - 1].pop();
+    let resetSpace = 0;
+    sliceResult[EXPAND_MAX_LINE - 1].forEach(item => {
+        resetSpace += item.spaceWidth;
+    });
+    if (resetSpace >= LIMIT_NUM_EACH_LINE) { // 若最后一行满了
+        sliceResult[EXPAND_MAX_LINE - 1].pop();
+    }
     sliceResult[EXPAND_MAX_LINE - 1].push(more);
     return  sliceResult;
 }

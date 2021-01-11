@@ -109,7 +109,7 @@ export default {
          * @param columnIndex
          * @param rowData
          */
-        clickCell({ expandItem, rowIndex, columnIndex }, rowData) {
+        async clickCell({ expandItem, rowIndex, columnIndex }, rowData) {
             const currentExpandKey = expandItem.value;
             const { expandKey = "", expandIndex: isExpand } = this.expandMap[`${this.groupIndex}-${rowIndex}`] || {};
             const { isSelected } = this.selectedMap[`${this.groupIndex}-${rowIndex}-${columnIndex}`] || {};
@@ -127,7 +127,7 @@ export default {
                 // 隐藏展开的节点，在transitionend中进行
             } else { // 展开
                 // 显示展开的节点，并设置展开的数据
-                this.changeExpandListsShowStatus({ rowIndex, columnIndex, rowData }, true, expandItem);
+                await this.changeExpandListsShowStatus({ rowIndex, columnIndex, rowData }, true, expandItem);
                 // 将父容器高度更新为展开后的高度
                 this.setHeightByRowIndexNextTick(rowIndex);
             }
@@ -181,7 +181,7 @@ export default {
          * @param isExpand 是否展开，若为true，expandItem必填
          * @param expandItem 展开的数据内容
          */
-        changeExpandListsShowStatus(indexConfig = {}, isExpand, expandItem = {}) {
+        async changeExpandListsShowStatus(indexConfig = {}, isExpand, expandItem = {}) {
             const { rowIndex, columnIndex = null, rowData = {} } = indexConfig;
             const { value } = expandItem;
             const { expandKey } = this.expandMap[`${this.groupIndex}-${rowIndex}`] || {};
@@ -191,7 +191,7 @@ export default {
 
             if (changeExpandItem) {
                 // 更新展开数据
-                this.updateExpandData({
+                await this.updateExpandData({
                     key: `${this.groupIndex}-${rowIndex}`,
                     expandIndex: isExpand ? columnIndex : isExpand,
                     columnIndex,

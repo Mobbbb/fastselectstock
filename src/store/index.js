@@ -1,8 +1,10 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { SPACE_MAP, LIMIT_NUM_EACH_LINE, NOT_LEAF_MAP, MORE_AREA, STATIC_DATA } from '_c/config';
-import { divideListIntoGroups, sliceExpandRows, calcStrSpaceWidth, getMapSection,
+import { SPACE_MAP, LIMIT_NUM_EACH_LINE, NOT_LEAF_MAP, MORE_AREA, EXPAND_SPECIAL_MAP,
+	SELECTION_TYPE_MAP, EXPAND_API_TYPE } from '_c/config';
+import { divideListIntoGroups, sliceExpandRows, calcStrSpaceWidth, getNumFromSection,
 	getTreeDeepestLevel, sortTreeListData, treeDataTranslate } from '_c/libs/util';
+import { fetchExpandApi } from '_c/api';
 
 Vue.use(Vuex)
 
@@ -18,6 +20,8 @@ export default new Vuex.Store({
 
 		tipsConfig: {}, // 解释弹窗的数据
 		rangeInputConfig: {}, // 区间范围输入弹框
+
+		expandSpDataMap: EXPAND_SPECIAL_MAP, // 特殊的展开项集合（行业、概念、地区）
 	},
 	mutations: {
 		addLeavesNodes(state, nodes) {
@@ -70,6 +74,9 @@ export default new Vuex.Store({
 		hideRangeInput(state) {
 			state.rangeInputConfig = { isShow: false };
 		},
+		setExpandSpDataMap(state, { key, data }) {
+			state.expandSpDataMap.set(key, data);
+		},
 	},
 	actions: {
 		initTreeData({ state, commit, dispatch }, lists) {
@@ -95,7 +102,7 @@ export default new Vuex.Store({
 			lists.forEach(item => {
 				// 添加属性
 				let strSpaceWidth = calcStrSpaceWidth(item.label);
-				item.spaceWidth = getMapSection(strSpaceWidth, SPACE_MAP);
+				item.spaceWidth = getNumFromSection(strSpaceWidth, SPACE_MAP);
 
 				// 拆分
 				if (item.children) {
@@ -135,6 +142,7 @@ export default new Vuex.Store({
 
 			// 对叶子节点的父亲按一定规则进行分组，并存储至其祖父的键名下
 			Object.keys(parentsMap).forEach(key => {
+				parentsMap[key].sort((a, b) => a.sort - b.sort);
 				parentsMap[key] = divideListIntoGroups(parentsMap[key], LIMIT_NUM_EACH_LINE);
 			});
 
@@ -164,22 +172,25 @@ export default new Vuex.Store({
 		 * @description 获取并更新展开列表的数据
 		 * @param state
 		 * @param commit
+		 * @param dispatch
 		 * @param key
 		 * @param expandIndex
 		 * @param columnIndex
 		 * @param expandItem
 		 * @param rowData
 		 */
-		updateExpandData({ state, commit }, { key, expandIndex, columnIndex, expandItem, rowData }) {
+		async updateExpandData({ state, commit, dispatch }, { key, expandIndex, columnIndex, expandItem, rowData }) {
 			const { value, label = "", remark = "", type } = expandItem;
 			const newExpandMap = Object.assign({}, state.expandMap);
 			let { children = [] } = expandItem;
 
 			// 根据不同类型，从不同渠道获取数据
 			if (type === NOT_LEAF_MAP[0]) { // 从接口获取数据
-
+				await dispatch('fetchExpandData', state.expandSpDataMap.get(label));
+				let divideResult = divideListIntoGroups(state.expandSpDataMap.get(label).data, LIMIT_NUM_EACH_LINE); // 分组
+				children = sliceExpandRows(divideResult, MORE_AREA); // 截断溢出的行数
 			} else if (type === NOT_LEAF_MAP[1]) { // 从本地获取
-				let divideResult = divideListIntoGroups(STATIC_DATA[label], LIMIT_NUM_EACH_LINE); // 分组
+				let divideResult = divideListIntoGroups(state.expandSpDataMap.get(label).data, LIMIT_NUM_EACH_LINE); // 分组
 				children = sliceExpandRows(divideResult, MORE_AREA); // 截断溢出的行数
 			} else {
 				// 按sort字段对展开列表进行排序
@@ -202,6 +213,43 @@ export default new Vuex.Store({
 			};
 
 			commit('setExpandMap', newExpandMap);
+		},
+		/**
+		 * @description 从接口中获取展开的数据（行业、概念）
+		 * @param state
+		 * @param commit
+		 * @param api
+		 * @param data
+		 * @returns {Promise<void>}
+		 */
+		async fetchExpandData({ state, commit }, { api, data = [] }) {
+			if (data.length) return;
+
+			const map = {}; // 行业、概念数据获取
+			const lists = await fetchExpandApi(api) || [];
+			// 按fluctuation字段对接口获取的展开列表进行排序
+			lists.sort((a, b) => b.fluctuation - a.fluctuation);
+			lists.forEach(item => {
+				if (EXPAND_API_TYPE.includes(item.type)) {
+					if (!map[item.type]) map[item.type] = [];
+
+					item.label = item.conceptName;
+					item.value = item.conceptCode;
+					item.spaceWidth = getNumFromSection(calcStrSpaceWidth(item.label), SPACE_MAP);
+
+					map[item.type].push(item);
+
+					item.type = SELECTION_TYPE_MAP.SELECT_DEFAULT;
+				}
+			});
+			for (let [key, value] of state.expandSpDataMap) {
+				if (EXPAND_API_TYPE.includes(value.type)) {
+					const newData = Object.assign({}, value);
+					newData.data = map[value.type];
+					// 将行业、概念数据装入map
+					commit('setExpandSpDataMap', { key, data: newData });
+				}
+			}
 		},
 	},
 	modules: {

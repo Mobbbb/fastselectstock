@@ -400,7 +400,25 @@ export const list = {
 						"remark": "",
 						"label": "市场",
 						"sort": 1,
-						"type": "expand-api",
+						"children": [
+							{
+								"remark": "",
+								"label": "全部a股",
+								"sort": 1,
+								"type": "select",
+								"value": "asfasdfsdf",
+								"parents": "5fdc6e40ecf760015576f064555"
+							},
+							{
+								"remark": "",
+								"label": "上海a股",
+								"sort": 2,
+								"type": "select",
+								"value": "sdfgdfghdfhdfh",
+								"parents": "5fdc6e40ecf760015576f064555"
+							},
+						],
+						"type": "",
 						"value": "5fdc6e40ecf760015576f064555",
 						"parents": "5fdc6e40ecf760015576f062",
 					},
@@ -418,6 +436,14 @@ export const list = {
 						"sort": 2,
 						"type": "expand-static",
 						"value": "5fdc6e40ecf760015576f06877777",
+						"parents": "5fdc6e40ecf760015576f062"
+					},
+					{
+						"remark": "",
+						"label": "概念",
+						"sort": 4,
+						"type": "expand-api",
+						"value": "asfasdgfsdgsfdgdfhdfh",
 						"parents": "5fdc6e40ecf760015576f062"
 					}
 				],
@@ -781,9 +807,23 @@ export const AREA_DATA = [
 	}
 ];
 
-export const STATIC_DATA = {
-	'地区': AREA_DATA,
-};
+export const EXPAND_API_TYPE = ['field', 'novel'];
+
+export const EXPAND_SPECIAL_MAP = new Map([
+	['行业', {
+		data: [],
+		api: '/mobile/NewHotSpotStocks/allConceptData?source=sjksxg',
+		type: EXPAND_API_TYPE[0],
+	}],
+	['概念', {
+		data: [],
+		api: '/mobile/NewHotSpotStocks/allConceptData?source=sjksxg',
+		type: EXPAND_API_TYPE[1],
+	}],
+	['地区', {
+		data: AREA_DATA,
+	}],
+]);
 
 export const WAP_WEB_URL = {
 	prod: '//www.iwencai.com/unifiedmobile/',

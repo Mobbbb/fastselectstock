@@ -12,7 +12,7 @@ const httpRequest = (url, data = {}, config = {}) => {
                     if (config.wholeResult) {
                         resolve(result);
                     }
-                    if (result.success || result.status_code == 0 || result.status_code == '0' || result.flag) {
+                    if (result.success || result.status_code === 0) {
                         let answer = null;
                         if (typeof result.answer !== 'undefined') {
                             answer = result.answer || null;

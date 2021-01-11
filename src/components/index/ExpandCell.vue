@@ -5,11 +5,13 @@
             <div class="right-arrow" v-if="showArrow"></div>
         </div>
         <div class="recommend-label" v-if="item.recommend">{{recommend}}</div>
+        <RiseFallText v-else-if="item.fluctuation" :rate="item.fluctuation"></RiseFallText>
     </div>
 </template>
 
 <script>
 import { SELECTION_TYPE_MAP } from '_c/config';
+import RiseFallText from '_c/components/base/RiseFallText';
 
 export default {
     name: 'expand-selection-item',
@@ -17,7 +19,7 @@ export default {
         item: Object,
     },
     components: {
-
+        RiseFallText,
     },
     data() {
         return {
@@ -59,6 +61,7 @@ export default {
         display: flex;
         align-items: center;
         justify-content: center;
+        margin-bottom: 2px;
     }
     .selection-atom-item{
         height: 16px;
@@ -74,7 +77,6 @@ export default {
         height: 14px;
         line-height: 14px;
         font-size: 12px;
-        margin-top: 2px;
         color: #B3B3B3;
         white-space: nowrap;
         overflow: hidden;
