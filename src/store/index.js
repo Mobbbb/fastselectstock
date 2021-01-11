@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { SPACE_MAP, LIMIT_NUM_EACH_LINE, NOT_LEAF_MAP, AREA_DATA, MORE_AREA } from '_c/config';
+import { SPACE_MAP, LIMIT_NUM_EACH_LINE, NOT_LEAF_MAP, MORE_AREA, STATIC_DATA } from '_c/config';
 import { divideListIntoGroups, sliceExpandRows, calcStrSpaceWidth, getMapSection,
 	getTreeDeepestLevel, sortTreeListData, treeDataTranslate } from '_c/libs/util';
 
@@ -170,7 +170,7 @@ export default new Vuex.Store({
 			if (type === NOT_LEAF_MAP[0]) { // 从接口获取数据
 
 			} else if (type === NOT_LEAF_MAP[1]) { // 从本地获取
-				let divideResult = divideListIntoGroups(AREA_DATA, LIMIT_NUM_EACH_LINE); // 分组
+				let divideResult = divideListIntoGroups(STATIC_DATA[label], LIMIT_NUM_EACH_LINE); // 分组
 				children = sliceExpandRows(divideResult, MORE_AREA); // 截断溢出的行数
 			} else {
 				// 按sort字段对展开列表进行排序

@@ -538,19 +538,29 @@ export const MORE_INDUSTRY = {
 	"type": "more-industry",
 };
 
+export const MORE_NOVEL = {
+	"label": "更多概念",
+	"spaceWidth": 1,
+	"value": "-3",
+	"type": "more-novel",
+};
+
 export const EXPAND_MAX_LINE = 6; // 展开的最大行数
 
 export const LIMIT_NUM_EACH_LINE = 3; // 一行的单元格个数
 
 export const NOT_LEAF_MAP = ['expand-api', 'expand-static'];
 
+export const MORE_TYPE = [MORE_AREA.type, MORE_INDUSTRY.type, MORE_NOVEL.type];
+
 export const SELECTION_TYPE_MAP = {
 	"EXPAND_API": "expand-api",
 	"EXPAND_STATIC": "expand-static",
 	"INPUT": "input",
 	"SELECT": "select",
-	"MORE_AREA": "more-area",
-	"MORE_INDUSTRY": "more-industry",
+	"MORE_AREA": MORE_AREA.type,
+	"MORE_INDUSTRY": MORE_INDUSTRY.type,
+	"MORE_NOVEL": MORE_NOVEL.type,
 };
 
 export const AREA_DATA = [
@@ -759,3 +769,7 @@ export const AREA_DATA = [
 		"type": "select"
 	}
 ];
+
+export const STATIC_DATA = {
+	'地区': AREA_DATA,
+};

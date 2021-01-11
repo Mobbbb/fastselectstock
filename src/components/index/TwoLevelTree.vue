@@ -24,7 +24,7 @@
 
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex';
-import { SELECTION_TYPE_MAP } from '_c/config';
+import { SELECTION_TYPE_MAP, MORE_TYPE } from '_c/config';
 import ExpandSelections from '_c/components/index/ExpandSelections.vue';
 import Cell from '_c/components/index/Cell.vue';
 import Row from '_c/components/grid/Row.vue';
@@ -92,8 +92,14 @@ export default {
                 this.changeSelectedStatus(rowIndex, columnIndex, true, selectedItem);
                 // 收起展开的节点
                 this.collapsePresets(rowIndex);
-            } else if (selectedItem.type === SELECTION_TYPE_MAP.MORE_AREA) {
-
+            } else if (MORE_TYPE.includes(selectedItem.type)) {
+                // 跳转至列表选择页
+                this.$router.push({
+                    name: 'SearchList',
+                    query: {
+                        type: selectedItem.type,
+                    },
+                });
             }
         },
         /**
