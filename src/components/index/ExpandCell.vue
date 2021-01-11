@@ -1,11 +1,15 @@
 <template>
     <div class="expand-selection-item">
-        <div class="selection-atom-item" @click="clickItem">{{item.label}}</div>
+        <div class="atom-item-wrap" @click="clickItem">
+            <div class="selection-atom-item">{{item.label}}</div>
+            <div class="right-arrow" v-if="showArrow"></div>
+        </div>
         <div class="recommend-label" v-if="item.recommend">{{recommend}}</div>
     </div>
 </template>
 
 <script>
+import { SELECTION_TYPE_MAP } from '_c/config';
 
 export default {
     name: 'expand-selection-item',
@@ -28,6 +32,9 @@ export default {
 
             return recommend;
         },
+        showArrow() {
+            return [SELECTION_TYPE_MAP.MORE_INDUSTRY, SELECTION_TYPE_MAP.MORE_AREA].includes(this.item.type);
+        },
     },
     methods: {
         clickItem() {
@@ -48,9 +55,20 @@ export default {
         flex-direction: column;
         justify-content: center;
     }
+    .atom-item-wrap{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
     .selection-atom-item{
         height: 16px;
         line-height: 16px;
+    }
+    .right-arrow{
+        width: 14px;
+        height: 14px;
+        background: url("//i.thsi.cn/iwencai/xuangu/images/right-arrow.png");
+        background-size: 100%;
     }
     .recommend-label{
         height: 14px;

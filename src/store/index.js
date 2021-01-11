@@ -35,6 +35,13 @@ export default new Vuex.Store({
 		setOriginTreeData(state, data) {
 			state.originTreeData = data;
 		},
+		changeGroupShowStatus(state, { key, status }) {
+			state.originTreeData.forEach(item => {
+				if (item.value === key) {
+					item.showGroup = status;
+				}
+			});
+		},
 		setExpandMap(state, map) {
 			state.expandMap = map;
 		},
@@ -78,8 +85,8 @@ export default new Vuex.Store({
 			// 将列表结构变为树形结构
 			commit('setOriginTreeData', treeDataTranslate(state.originListsExceptLeaves));
 
-			// 为最外层节点设置该节点的深度
-			dispatch('setTreeDeepestLevel');
+			// 为最外层节点设置该节点的深度和显示状态
+			dispatch('setRootTreeData');
 		},
 		/**
 		 * @description 拆分叶子节点和非叶子节点
@@ -142,13 +149,14 @@ export default new Vuex.Store({
 			});
 		},
 		/**
-		 * @description 为最外层节点设置当前节点的最深层级数
+		 * @description 为根节点设置属性
 		 */
-		setTreeDeepestLevel({ state }) {
+		setRootTreeData({ state }) {
 			let deepestLevel = 1;
 			state.originTreeData.forEach(item => {
 				deepestLevel ++;
-				item.deepestLevel = getTreeDeepestLevel(item.children, deepestLevel);
+				item.deepestLevel = getTreeDeepestLevel(item.children, deepestLevel); // 设置最深层级数
+				Vue.set(item, 'showGroup', true); // 设置是否显示组
 				deepestLevel = 1;
 			});
 		},
@@ -160,8 +168,9 @@ export default new Vuex.Store({
 		 * @param expandIndex
 		 * @param columnIndex
 		 * @param expandItem
+		 * @param rowData
 		 */
-		updateExpandData({ state, commit }, { key, expandIndex, columnIndex, expandItem }) {
+		updateExpandData({ state, commit }, { key, expandIndex, columnIndex, expandItem, rowData }) {
 			const { value, label = "", remark = "", type } = expandItem;
 			const newExpandMap = Object.assign({}, state.expandMap);
 			let { children = [] } = expandItem;
@@ -187,6 +196,7 @@ export default new Vuex.Store({
 					subTips: children,
 				},
 				expandKey: value,
+				rowData,
 				expandIndex,
 				columnIndex,
 			};

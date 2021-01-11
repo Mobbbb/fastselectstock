@@ -3,13 +3,13 @@
         <div class="animation-wrap"
              v-for="(row, rowIndex) in rows"
              :style="{height: `${heightMap[rowIndex]}px`}" @transitionend="transitionend(rowIndex)">
-            <Row :key="rowIndex" :gutter="8" ref="selection-wrap" class="selection-row-wrap">
+            <Row :key="rowIndex" :gutter="CELL_GAP" ref="selection-wrap" class="selection-row-wrap">
                 <Col :span="item.spaceWidth * 8" v-for="(item, columnIndex) in row" :key="item.value">
                     <Cell :groupIndex="groupIndex"
                           :rowIndex="String(rowIndex)"
                           :columnIndex="String(columnIndex)"
                           :item="item"
-                          @on-click="clickCell">
+                          @on-click="clickCell($event, row)">
                     </Cell>
                 </Col>
                 <ExpandSelections :groupIndex="groupIndex"
@@ -24,7 +24,7 @@
 
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex';
-import { SELECTION_TYPE_MAP, MORE_TYPE } from '_c/config';
+import { SELECTION_TYPE_MAP, MORE_TYPE, CELL_GAP, SELECT_MAP } from '_c/config';
 import ExpandSelections from '_c/components/index/ExpandSelections.vue';
 import Cell from '_c/components/index/Cell.vue';
 import Row from '_c/components/grid/Row.vue';
@@ -44,6 +44,7 @@ export default {
     },
     data() {
         return {
+            CELL_GAP,
             collapsedHeight: 0, // 单行收起时的高度
             heightMap: {}, // 每行高度的存储对象
             isCollapsed: false, // 当前是否正在收起中
@@ -57,7 +58,6 @@ export default {
     },
     methods: {
         ...mapMutations([
-            'updateExpandData',
             'setSelectedMap',
             'updateExpandStatusByKey',
             'updateSelectedMapByKey',
@@ -87,7 +87,7 @@ export default {
                         this.collapsePresets(rowIndex);
                     },
                 });
-            } else if (selectedItem.type === SELECTION_TYPE_MAP.SELECT) {
+            } else if (SELECT_MAP.includes(selectedItem.type)) {
                 // 设置为选中状态，并设置选中的子选项数据
                 this.changeSelectedStatus(rowIndex, columnIndex, true, selectedItem);
                 // 收起展开的节点
@@ -107,8 +107,9 @@ export default {
          * @param expandItem
          * @param rowIndex
          * @param columnIndex
+         * @param rowData
          */
-        clickCell({ expandItem, rowIndex, columnIndex }) {
+        clickCell({ expandItem, rowIndex, columnIndex }, rowData) {
             const currentExpandKey = expandItem.value;
             const { expandKey = "", expandIndex: isExpand } = this.expandMap[`${this.groupIndex}-${rowIndex}`] || {};
             const { isSelected } = this.selectedMap[`${this.groupIndex}-${rowIndex}-${columnIndex}`] || {};
@@ -126,15 +127,15 @@ export default {
                 // 隐藏展开的节点，在transitionend中进行
             } else { // 展开
                 // 显示展开的节点，并设置展开的数据
-                this.changeExpandListsShowStatus(rowIndex, columnIndex, true, expandItem);
+                this.changeExpandListsShowStatus({ rowIndex, columnIndex, rowData }, true, expandItem);
                 // 将父容器高度更新为展开后的高度
                 this.setHeightByRowIndexNextTick(rowIndex);
             }
         },
         transitionend(rowIndex) {
             if (this.isCollapsed) {
-                // 隐藏展开的节点，收起动作不依赖列号，故传入无效值null
-                this.changeExpandListsShowStatus(rowIndex, null, false);
+                // 隐藏展开的节点，收起动作只依赖行号
+                this.changeExpandListsShowStatus({ rowIndex }, false);
             }
         },
         /**
@@ -176,12 +177,12 @@ export default {
         },
         /**
          * @description 显示或隐藏展开的节点
-         * @param rowIndex
-         * @param columnIndex
+         * @param indexConfig
          * @param isExpand 是否展开，若为true，expandItem必填
          * @param expandItem 展开的数据内容
          */
-        changeExpandListsShowStatus(rowIndex, columnIndex, isExpand, expandItem = {}) {
+        changeExpandListsShowStatus(indexConfig = {}, isExpand, expandItem = {}) {
+            const { rowIndex, columnIndex = null, rowData = {} } = indexConfig;
             const { value } = expandItem;
             const { expandKey } = this.expandMap[`${this.groupIndex}-${rowIndex}`] || {};
             const changeExpandItem = value !== expandKey;
@@ -195,6 +196,7 @@ export default {
                     expandIndex: isExpand ? columnIndex : isExpand,
                     columnIndex,
                     expandItem,
+                    rowData,
                 });
             } else {
                 // 更新展开状态
