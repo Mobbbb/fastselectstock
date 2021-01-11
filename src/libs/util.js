@@ -1,4 +1,6 @@
-import { EXPAND_MAX_LINE } from '_c/config';
+import { EXPAND_MAX_LINE, WAP_WEB_URL, WAP_THS_URL } from '_c/config';
+
+const httpClient = window.location.protocol;
 
 /**
  * @param {Array} data 对象数组
@@ -213,4 +215,79 @@ export const setRem = () => {
     let htmlDom = document.getElementsByTagName('html')[0];
 
     htmlDom.style.fontSize = htmlWidth / 15 + 'px';
+};
+
+export const getRem = () => {
+    const htmlWidth = document.documentElement.clientWidth || document.body.clientWidth;
+    let fontSize = htmlWidth / 15;
+
+    return fontSize / 25;
+};
+
+export const isInTHSApp = () => {
+    const { userAgent } = navigator;
+    const ths = /Hexin_Gphone\/|IHexin\//.test(userAgent);
+    const thsPro = /innerversion\/[I|G]Z/.test(userAgent);
+
+    return ths || thsPro;
+}
+
+/**
+ * @description 获取设备名称
+ * @returns {string}
+ */
+export const getDeviceType = () => {
+    const userAgent = navigator.userAgent;
+    let a = userAgent.indexOf('Hexin_Gphone/');
+    let b = userAgent.indexOf('IHexin/');
+    let deviceType = '';
+    if (a > -1) {
+        deviceType = 'Android'
+    }
+    if(b > -1) {
+        deviceType = 'iPhone'
+    }
+    return deviceType;
+};
+
+export const getUrlByEvn = (urlParams) => {
+    const { host } = window.location;
+    if (host.indexOf("ceshiai.iwencai.com") > -1 || host.indexOf("testm.10jqka.com.cn") > -1) {
+        return httpClient + urlParams.test;
+    } else {
+        return httpClient + urlParams.prod;
+    }
+}
+
+export const getWapUrlByEnv = (query) => {
+    let url = getUrlByEvn(isInTHSApp() ? WAP_THS_URL : WAP_WEB_URL);
+    if (query) url += `?q=${decodeURIComponent(decodeURIComponent(query))}`
+    return url;
+}
+
+export const jumpPage = (url, isClientPage = false, fullScreen = false, title = '') => {
+    let protocol = '';
+    let titleStr = '';
+    let clientUrl = url;
+
+    // 若链接不含有http头，自动补全
+    if (url.substr(0, 4) !== 'http') protocol = httpClient;
+    if (title) titleStr = '^cusTitle=' + title;
+    if (!isClientPage) clientUrl = protocol + url;
+
+    const device = getDeviceType();
+    if (!isClientPage && isInTHSApp()) { // web页面使用协议跳转
+        if (fullScreen) { // 跳全屏
+            if (device === 'Android') {
+                clientUrl = "client://client.html?action=ymtz^url=" + protocol + url +
+                    "^webid=4224^mode=new^showStatusBar=1^statusBarColor=e93030";
+            } else if (device === 'iPhone') {
+                clientUrl = "client://client.html?action=ymtz^url=" + protocol + url +
+                    "^webid=2305^mode=new^showStatusBar=1^statusBarColor=e93030";
+            }
+        } else {
+            clientUrl = "client.html?action=ymtz^webid=2804^mode=new^url=" + protocol + url + titleStr;
+        }
+    }
+    window.location.href = clientUrl;
 };

@@ -8,7 +8,7 @@
             </div>
             <div class="selected-item-wrap">
                 <div class="selected-item" v-for="item in selectedTextArr">
-                    <div class="item-title">{{item.query}}</div>
+                    <div class="item-title">{{item.showQuery}}</div>
                     <div class="delete-icon" @click="deleteItem(item.key)"></div>
                 </div>
             </div>
@@ -23,7 +23,7 @@
                     <span>项</span>
                 </div>
             </div>
-            <div class="search-btn" :class="searchAble ? 'red-bg' : ''">开始选股</div>
+            <div class="search-btn" :class="searchAble ? 'red-bg' : ''" @click="jumpToResult">开始选股</div>
         </div>
     </div>
 </template>
@@ -31,6 +31,7 @@
 <script>
 import { mapState, mapMutations } from 'vuex';
 import { SELECTION_TYPE_MAP } from '_c/config';
+import { getWapUrlByEnv, jumpPage } from '_c/libs/util';
 
 export default {
     name: 'selected-list',
@@ -51,11 +52,19 @@ export default {
                     if (type === SELECTION_TYPE_MAP.INPUT) {
                         arr.push({
                             key,
+                            showQuery: `${parentTitle}${value1}-${value2}`,
                             query: `${parentTitle}${value1}-${value2}`,
+                        });
+                    } else if (type === SELECTION_TYPE_MAP.SELECT_DEFAULT) {
+                        arr.push({
+                            key,
+                            showQuery: `${parentTitle}${label}`,
+                            query: `${label}`,
                         });
                     } else {
                         arr.push({
                             key,
+                            showQuery: `${parentTitle}${label}`,
                             query: `${parentTitle}${label}`,
                         });
                     }
@@ -85,6 +94,16 @@ export default {
                 key,
                 isSelected: false,
             });
+        },
+        jumpToResult() {
+            if (!this.searchAble) return;
+
+            let searchArr = [];
+            this.selectedTextArr.forEach(item => {
+                searchArr.push(item.query);
+            });
+
+            jumpPage(getWapUrlByEnv(searchArr.join(' ')));
         },
     },
 }
