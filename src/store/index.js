@@ -245,7 +245,7 @@ export default new Vuex.Store({
 			for (let [key, value] of state.expandSpDataMap) {
 				if (EXPAND_API_TYPE.includes(value.type)) {
 					const newData = Object.assign({}, value);
-					newData.data = map[value.type];
+					newData.data = map[value.type] || [];
 					// 将行业、概念数据装入map
 					commit('setExpandSpDataMap', { key, data: newData });
 				}

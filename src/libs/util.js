@@ -112,16 +112,20 @@ export function divideListIntoGroups(lists, limitNumEachLine) {
  * @returns {[]}
  */
 export function sliceExpandRows(divideResult, more) {
-    let sliceResult = divideResult.slice(0, EXPAND_MAX_LINE);
-    let resetSpace = 0;
-    sliceResult[EXPAND_MAX_LINE - 1].forEach(item => {
-        resetSpace += item.spaceWidth;
-    });
-    if (resetSpace >= LIMIT_NUM_EACH_LINE) { // 若最后一行满了
-        sliceResult[EXPAND_MAX_LINE - 1].pop();
+    if (divideResult.length > EXPAND_MAX_LINE) { // 若行数超出 EXPAND_MAX_LINE
+        let sliceResult = divideResult.slice(0, EXPAND_MAX_LINE);
+        let resetSpace = 0;
+        sliceResult[EXPAND_MAX_LINE - 1].forEach(item => {
+            resetSpace += item.spaceWidth;
+        });
+        if (resetSpace >= LIMIT_NUM_EACH_LINE) { // 若最后一行满了
+            sliceResult[EXPAND_MAX_LINE - 1].pop();
+        }
+        sliceResult[EXPAND_MAX_LINE - 1].push(more);
+        return sliceResult;
+    } else {
+        return divideResult;
     }
-    sliceResult[EXPAND_MAX_LINE - 1].push(more);
-    return  sliceResult;
 }
 
 /**
