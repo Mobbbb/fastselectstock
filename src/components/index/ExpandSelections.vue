@@ -35,7 +35,6 @@ export default {
     computed: {
         ...mapState([
             'expandMap',
-            'selectedMap',
         ]),
         expandSelectionsConfig() {
             return this.expandMap[`${this.groupIndex}-${this.rowIndex}`] || {};

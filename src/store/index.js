@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import { SPACE_MAP, LIMIT_NUM_EACH_LINE, NOT_LEAF_MAP, MORE_AREA, EXPAND_SPECIAL_MAP,
 	SELECTION_TYPE_MAP, EXPAND_API_TYPE, STRATEGY_NUM_EACH_PAGE } from '_c/config';
 import { divideListIntoGroups, sliceExpandRows, calcStrSpaceWidth, getNumFromSection,
-	getTreeDeepestLevel, sortTreeListData, treeDataTranslate } from '_c/libs/util';
+	getTreeDeepestLevel, sortTreeListData, treeDataTranslate, getRem } from '_c/libs/util';
 import { fetchExpandApi, fetchConfigListsApi, fetchRobotIndexApi } from '_c/api';
 
 Vue.use(Vuex)
@@ -15,8 +15,11 @@ export default new Vuex.Store({
 		originListsExceptLeaves: [], // 除叶子节点之外的节点
 		originTreeData: [], // 渲染节点的数据
 
+		needToHideAfterAnimation: false, // 收起动画结束后是否需要隐藏
 		expandMap: {}, // 条件选股展开列表的集合, key值格式为『分组的索引-行索引』
 		selectedMap: {}, // 选中的条件的集合, key值格式为『分组的索引-行索引-列索引』
+		rowHeightMap: {}, // 当前行高度的集合, key值格式为『分组的索引-行索引』
+		collapsedHeight: 58 * getRem(), // 单行收起时的高度
 
 		tipsConfig: {}, // 解释弹窗的数据
 		rangeInputConfig: {}, // 区间范围输入弹框
@@ -85,6 +88,12 @@ export default new Vuex.Store({
 		},
 		setStrategyComponents(state, data) {
 			state.strategyComponents = data;
+		},
+		updateHideAfterAnimationStatus(state, status) {
+			state.needToHideAfterAnimation = status;
+		},
+		setRowHeightByKey(state, { key, height }) {
+			Vue.set(state.rowHeightMap, key, height);
 		},
 	},
 	actions: {
@@ -177,6 +186,74 @@ export default new Vuex.Store({
 				deepestLevel = 1;
 			});
 		},
+
+
+		/**
+		 * @description 变更选中状态
+		 * @param state
+		 * @param commit
+		 * @param rowIndex
+		 * @param groupIndex
+		 * @param columnIndex
+		 * @param isSelected 是否选中，若为true，则selectedItem必传
+		 * @param selectedItem 选中的数据内容
+		 */
+		changeSelectedStatus({ state, commit }, { groupIndex, rowIndex, columnIndex, isSelected, selectedItem = {} }) {
+			const { isSelected: tempValue } = state.selectedMap[`${groupIndex}-${rowIndex}-${columnIndex}`] || {};
+			const firstClick = typeof tempValue === 'undefined';
+
+			if (firstClick) {
+				// 首次点击，设置初始值
+				let newSelectedMap = Object.assign({}, state.selectedMap);
+				newSelectedMap[`${groupIndex}-${rowIndex}-${columnIndex}`] = {
+					isSelected,
+					selectedItem,
+				}
+				commit('setSelectedMap', newSelectedMap);
+			} else {
+				commit('updateSelectedMapByKey', {
+					key: `${groupIndex}-${rowIndex}-${columnIndex}`,
+					isSelected,
+					selectedItem,
+				});
+			}
+		},
+		/**
+		 * @description 显示或隐藏展开的节点
+		 * @param state
+		 * @param commit
+		 * @param dispatch
+		 * @param indexConfig
+		 * @param isExpand 是否展开，若为true，expandItem必填
+		 * @param expandItem 展开的数据内容
+		 */
+		async changeExpandListsShowStatus({ state, commit, dispatch }, { indexConfig = {}, isExpand, expandItem = {} }) {
+			const { groupIndex, rowIndex, columnIndex = null, rowData = {} } = indexConfig;
+			const { value } = expandItem;
+			const { expandKey } = state.expandMap[`${groupIndex}-${rowIndex}`] || {};
+			const changeExpandItem = value !== expandKey;
+
+			commit('updateHideAfterAnimationStatus', false);
+
+			if (changeExpandItem) {
+				// 更新展开数据
+				await dispatch('updateExpandData', {
+					key: `${groupIndex}-${rowIndex}`,
+					expandIndex: isExpand ? columnIndex : isExpand,
+					columnIndex,
+					expandItem,
+					rowData,
+				});
+			} else {
+				// 更新展开状态
+				commit('updateExpandStatusByKey', {
+					key: `${groupIndex}-${rowIndex}`,
+					expandIndex: isExpand ? columnIndex : isExpand,
+					columnIndex,
+				});
+			}
+		},
+
 		/**
 		 * @description 获取并更新展开列表的数据
 		 * @param state

@@ -2,7 +2,7 @@
     <div class="selection-wrap">
         <div class="animation-wrap"
              v-for="(row, rowIndex) in rows"
-             :style="{height: `${heightMap[rowIndex]}px`}" @transitionend="transitionend(rowIndex)">
+             :style="{height: `${rowHeightMap[`${groupIndex}-${rowIndex}`]}px`}" @transitionend="transitionend(rowIndex)">
             <Row :key="rowIndex" :gutter="CELL_GAP" ref="selection-wrap" class="selection-row-wrap">
                 <Col :span="item.spaceWidth * 8" v-for="(item, columnIndex) in row" :key="item.value">
                     <Cell :groupIndex="groupIndex"
@@ -45,26 +45,26 @@ export default {
     data() {
         return {
             CELL_GAP,
-            collapsedHeight: 0, // 单行收起时的高度
-            heightMap: {}, // 每行高度的存储对象
-            isCollapsed: false, // 当前是否正在收起中
         };
     },
     computed: {
         ...mapState([
+            'rowHeightMap',
             'expandMap',
             'selectedMap',
+            'needToHideAfterAnimation',
+            'collapsedHeight',
         ]),
     },
     methods: {
         ...mapMutations([
-            'setSelectedMap',
-            'updateExpandStatusByKey',
-            'updateSelectedMapByKey',
             'showRangeInput',
+            'updateHideAfterAnimationStatus',
+            'setRowHeightByKey',
         ]),
         ...mapActions([
-            'updateExpandData',
+            'changeSelectedStatus',
+            'changeExpandListsShowStatus',
         ]),
         /**
          * @description 点击展开的选项
@@ -82,14 +82,26 @@ export default {
                         selectedItem.value1 = value1;
                         selectedItem.value2 = value2;
                         // 设置为选中状态，并设置选中的子选项数据
-                        this.changeSelectedStatus(rowIndex, columnIndex, true, selectedItem);
+                        this.changeSelectedStatus({
+                            isSelected: true,
+                            groupIndex: this.groupIndex,
+                            rowIndex,
+                            columnIndex,
+                            selectedItem,
+                        });
                         // 收起展开的节点
                         this.collapsePresets(rowIndex);
                     },
                 });
             } else if (SELECT_MAP.includes(selectedItem.type)) {
                 // 设置为选中状态，并设置选中的子选项数据
-                this.changeSelectedStatus(rowIndex, columnIndex, true, selectedItem);
+                this.changeSelectedStatus({
+                    isSelected: true,
+                    groupIndex: this.groupIndex,
+                    rowIndex,
+                    columnIndex,
+                    selectedItem,
+                });
                 // 收起展开的节点
                 this.collapsePresets(rowIndex);
             } else if (MORE_TYPE.includes(selectedItem.type)) {
@@ -97,7 +109,10 @@ export default {
                 this.$router.push({
                     name: 'SearchList',
                     query: {
-                        type: selectedItem.type,
+                        parentTitle: selectedItem.parentTitle,
+                        groupIndex: this.groupIndex,
+                        columnIndex,
+                        rowIndex,
                     },
                 });
             }
@@ -115,7 +130,12 @@ export default {
             const { isSelected } = this.selectedMap[`${this.groupIndex}-${rowIndex}-${columnIndex}`] || {};
 
             // 取消选中状态
-            this.changeSelectedStatus(rowIndex, columnIndex, false);
+            this.changeSelectedStatus({
+                isSelected: false,
+                groupIndex: this.groupIndex,
+                rowIndex,
+                columnIndex,
+            });
 
             // 若当前是选中状态，点击后不执行后续的展开操作
             if (isSelected) return;
@@ -127,15 +147,17 @@ export default {
                 // 隐藏展开的节点，在transitionend中进行
             } else { // 展开
                 // 显示展开的节点，并设置展开的数据
-                await this.changeExpandListsShowStatus({ rowIndex, columnIndex, rowData }, true, expandItem);
+                const indexConfig = { groupIndex: this.groupIndex, rowIndex, columnIndex, rowData };
+                await this.changeExpandListsShowStatus({ indexConfig, expandItem, isExpand: true });
                 // 将父容器高度更新为展开后的高度
                 this.setHeightByRowIndexNextTick(rowIndex);
             }
         },
         transitionend(rowIndex) {
-            if (this.isCollapsed) {
+            if (this.needToHideAfterAnimation) {
                 // 隐藏展开的节点，收起动作只依赖行号
-                this.changeExpandListsShowStatus({ rowIndex }, false);
+                const indexConfig = { groupIndex: this.groupIndex, rowIndex };
+                this.changeExpandListsShowStatus({ indexConfig, isExpand: false });
             }
         },
         /**
@@ -143,69 +165,10 @@ export default {
          * @param rowIndex
          */
         collapsePresets(rowIndex) {
-            // 更改信号表示当前正在收起中
-            this.isCollapsed = true;
+            // 收起动画结束后隐藏节点
+            this.updateHideAfterAnimationStatus(true);
             // 将父容器高度重置为收起状态的高度
             this.setHeightByRowIndex(rowIndex, this.collapsedHeight);
-        },
-        /**
-         * @description 变更选中状态
-         * @param rowIndex
-         * @param columnIndex
-         * @param isSelected 是否选中，若为true，则selectedItem必传
-         * @param selectedItem 选中的数据内容
-         */
-        changeSelectedStatus(rowIndex, columnIndex, isSelected, selectedItem = {}) {
-            const { isSelected: tempValue } = this.selectedMap[`${this.groupIndex}-${rowIndex}-${columnIndex}`] || {};
-            const firstClick = typeof tempValue === 'undefined';
-
-            if (firstClick) {
-                // 首次点击，设置初始值
-                let newSelectedMap = Object.assign({}, this.selectedMap);
-                newSelectedMap[`${this.groupIndex}-${rowIndex}-${columnIndex}`] = {
-                    isSelected,
-                    selectedItem,
-                }
-                this.setSelectedMap(newSelectedMap);
-            } else {
-                this.updateSelectedMapByKey({
-                    key: `${this.groupIndex}-${rowIndex}-${columnIndex}`,
-                    isSelected,
-                    selectedItem,
-                });
-            }
-        },
-        /**
-         * @description 显示或隐藏展开的节点
-         * @param indexConfig
-         * @param isExpand 是否展开，若为true，expandItem必填
-         * @param expandItem 展开的数据内容
-         */
-        async changeExpandListsShowStatus(indexConfig = {}, isExpand, expandItem = {}) {
-            const { rowIndex, columnIndex = null, rowData = {} } = indexConfig;
-            const { value } = expandItem;
-            const { expandKey } = this.expandMap[`${this.groupIndex}-${rowIndex}`] || {};
-            const changeExpandItem = value !== expandKey;
-
-            this.isCollapsed = false; // 重置收起中的信号
-
-            if (changeExpandItem) {
-                // 更新展开数据
-                await this.updateExpandData({
-                    key: `${this.groupIndex}-${rowIndex}`,
-                    expandIndex: isExpand ? columnIndex : isExpand,
-                    columnIndex,
-                    expandItem,
-                    rowData,
-                });
-            } else {
-                // 更新展开状态
-                this.updateExpandStatusByKey({
-                    key: `${this.groupIndex}-${rowIndex}`,
-                    expandIndex: isExpand ? columnIndex : isExpand,
-                    columnIndex,
-                });
-            }
         },
         /**
          * @description 更新指定行索引的高度，若未传staticHeight，将获取行节点的高度
@@ -213,7 +176,8 @@ export default {
          * @param staticHeight
          */
         setHeightByRowIndex(rowIndex, staticHeight = "") {
-            this.heightMap[rowIndex] = staticHeight || this.$refs['selection-wrap'][rowIndex].$el.offsetHeight;
+            const height = staticHeight || this.$refs['selection-wrap'][rowIndex].$el.offsetHeight;
+            this.setRowHeightByKey({ key: `${this.groupIndex}-${rowIndex}`, height });
         },
         setHeightByRowIndexNextTick(rowIndex) {
             this.$nextTick(() => {
@@ -224,16 +188,9 @@ export default {
          * @description 获取行的初始高度，以行索引为键存入heightMap
          */
         getRowHeightMap() {
-            // 获取heightMap
-            let heightMap = {};
-            let selectionWraps = this.$refs['selection-wrap'] || [];
-            selectionWraps.forEach((selectionWrap, rowIndex) => {
-                heightMap[rowIndex] = selectionWrap.$el.offsetHeight;
+            this.rows.forEach((item, rowIndex) => {
+                this.setRowHeightByKey({ key: `${this.groupIndex}-${rowIndex}`, height: this.collapsedHeight });
             });
-            this.heightMap = heightMap;
-
-            // 获取首行的高度作为单行收起时的高度
-            this.collapsedHeight = heightMap[0] || 0;
         },
     },
     mounted() {
