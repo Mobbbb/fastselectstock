@@ -21,10 +21,12 @@ export default {
     methods: {
         ...mapActions([
             'initTreeData',
+            'getStrategyLists',
         ]),
     },
     mounted() {
         this.initTreeData(list);
+        this.getStrategyLists();
     },
 }
 </script>

@@ -577,6 +577,8 @@ export const EXPAND_MAX_LINE = 6; // 展开的最大行数
 
 export const LIMIT_NUM_EACH_LINE = 3; // 一行的单元格个数
 
+export const STRATEGY_NUM_EACH_PAGE = 2; // 一页的策略页卡个数
+
 // 特殊获取数据的类型集合
 export const NOT_LEAF_MAP = ['expand-api', 'expand-static'];
 

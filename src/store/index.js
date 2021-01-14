@@ -1,10 +1,10 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { SPACE_MAP, LIMIT_NUM_EACH_LINE, NOT_LEAF_MAP, MORE_AREA, EXPAND_SPECIAL_MAP,
-	SELECTION_TYPE_MAP, EXPAND_API_TYPE } from '_c/config';
+	SELECTION_TYPE_MAP, EXPAND_API_TYPE, STRATEGY_NUM_EACH_PAGE } from '_c/config';
 import { divideListIntoGroups, sliceExpandRows, calcStrSpaceWidth, getNumFromSection,
 	getTreeDeepestLevel, sortTreeListData, treeDataTranslate } from '_c/libs/util';
-import { fetchExpandApi } from '_c/api';
+import { fetchExpandApi, fetchConfigListsApi, fetchRobotIndexApi } from '_c/api';
 
 Vue.use(Vuex)
 
@@ -22,6 +22,9 @@ export default new Vuex.Store({
 		rangeInputConfig: {}, // 区间范围输入弹框
 
 		expandSpDataMap: EXPAND_SPECIAL_MAP, // 特殊的展开项集合（行业、概念、地区）
+
+		strategyLists: [], // 新手策略列表
+		strategyComponents: [], // 策略详情组件列表
 	},
 	mutations: {
 		addLeavesNodes(state, nodes) {
@@ -76,6 +79,12 @@ export default new Vuex.Store({
 		},
 		setExpandSpDataMap(state, { key, data }) {
 			state.expandSpDataMap.set(key, data);
+		},
+		setStrategyLists(state, lists) {
+			state.strategyLists = lists;
+		},
+		setStrategyComponents(state, data) {
+			state.strategyComponents = data;
 		},
 	},
 	actions: {
@@ -250,6 +259,55 @@ export default new Vuex.Store({
 					commit('setExpandSpDataMap', { key, data: newData });
 				}
 			}
+		},
+
+		/**
+		 * @description 获取策略列表
+		 * @param commit
+		 * @param dispatch
+		 * @returns {Promise<void>}
+		 */
+		async getStrategyLists({ commit, dispatch }) {
+			let lists = await dispatch('getConfigListsByType', 'wencaiNoviceStrategy');
+			const { list = [] } = lists;
+			list.forEach(item => item.spaceWidth = 1); // 为策略单元格添加单元格宽度，供下一步分组使用
+			// 将策略以每2个为一组的方式分成二维数组
+			commit('setStrategyLists', divideListIntoGroups(list, STRATEGY_NUM_EACH_PAGE));
+		},
+
+		/**
+		 * @description 获取选股条件配置
+		 * @param commit
+		 * @param dispatch
+		 * @returns {Promise<{}>}
+		 */
+		async getConditionLists({ commit, dispatch }) {
+			let lists = await dispatch('getConfigListsByType', 'wencaiCondition');
+			const { tree = {} } = lists;
+			return tree;
+		},
+
+		/**
+		 * @description 根据type类型获取对应的配置结果
+		 * @param type
+		 * @returns {Promise<*|{}>}
+		 */
+		async getConfigListsByType({}, type) {
+			let result = await fetchConfigListsApi(type) || {};
+			return result[type] || {};
+		},
+
+		/**
+		 * @description 根据策略id和问句,获取对应的结果页内容
+		 * @param commit
+		 * @param query
+		 * @param simulateId
+		 * @returns {Promise<void>}
+		 */
+		async getStrategyDetailAction({ commit }, { query, simulateId }) {
+			let result = await fetchRobotIndexApi({ query, simulateId }) || {};
+			const { components = [] } = result;
+			commit('setStrategyComponents', components);
 		},
 	},
 	modules: {

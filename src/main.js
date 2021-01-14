@@ -10,6 +10,8 @@ Vue.config.productionTip = false;
 setRem();
 window.onresize = () => setRem();
 
+Vue.use(window.jgyLib);
+
 new Vue({
   	router,
   	store,
