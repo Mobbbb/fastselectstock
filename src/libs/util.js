@@ -301,3 +301,50 @@ export const jumpPage = (url, isClientPage = false, fullScreen = false, title = 
     }
     window.location.href = clientUrl;
 };
+
+/**
+ * @description 原生后退
+ */
+export const nativeGoBack = () => {
+    try {
+        callNativeHandler('goback', { type: 'component' }, function () {
+
+        });
+    } catch (e) {
+        
+    }
+}
+
+/**
+ * @description 节流函数
+ * @param fn
+ * @param delay
+ * @param mustRunDelay
+ * @returns {*}
+ */
+export function throttle (fn, delay, mustRunDelay = 0) {
+    if (delay == null) return fn;
+    /* istanbul ignore next */
+    const timestampProvider =
+        typeof performance === 'object' ? performance : Date;
+    let timer = null;
+    let tStart;
+    return function () {
+        const tCurr = timestampProvider.now();
+        if (timer != null) clearTimeout(timer);
+        if (!tStart) {
+            tStart = tCurr;
+        }
+        if (mustRunDelay !== 0 && tCurr - tStart >= mustRunDelay) {
+            fn.apply(this, arguments);
+            tStart = tCurr;
+        } else {
+            const context = this;
+            const args = [...arguments];
+            timer = setTimeout(function () {
+                timer = null;
+                return fn.apply(context, args);
+            }, delay);
+        }
+    };
+}

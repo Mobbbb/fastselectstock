@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { SELECTION_TYPE_MAP } from '_c/config';
+import { MORE_TYPE } from '_c/config';
 import RiseFallText from '_c/components/base/RiseFallText';
 
 export default {
@@ -35,7 +35,7 @@ export default {
             return recommend;
         },
         showArrow() {
-            return [SELECTION_TYPE_MAP.MORE_INDUSTRY, SELECTION_TYPE_MAP.MORE_AREA].includes(this.item.type);
+            return MORE_TYPE.includes(this.item.type);
         },
     },
     methods: {

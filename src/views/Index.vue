@@ -1,5 +1,5 @@
 <template>
-    <div class="home-index">
+    <div class="home-index" @scroll="scroll" ref="homeIndex">
         <div class="main-title">新手选股</div>
         <div class="main-title-tips">不知道怎么选？不妨试试以下条件</div>
         <StrategyList></StrategyList>
@@ -34,7 +34,7 @@ export default {
 	},
     data() {
     	return {
-
+            scrollHeight: 0,
     	}
     },
     computed: {
@@ -44,7 +44,13 @@ export default {
         ]),
     },
     methods: {
-
+        scroll(e) {
+            this.scrollHeight = e.target.scrollTop;
+        },
+    },
+    activated() {
+        // 后退保持滚动高度
+        this.$refs.homeIndex.scrollTop = this.scrollHeight;
     },
     mounted() {
 

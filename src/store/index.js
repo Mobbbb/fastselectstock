@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { SPACE_MAP, LIMIT_NUM_EACH_LINE, NOT_LEAF_MAP, MORE_AREA, EXPAND_SPECIAL_MAP,
+import { SPACE_MAP, LIMIT_NUM_EACH_LINE, NOT_LEAF_MAP, EXPAND_SPECIAL_MAP,
 	SELECTION_TYPE_MAP, EXPAND_API_TYPE, STRATEGY_NUM_EACH_PAGE } from '_c/config';
 import { divideListIntoGroups, sliceExpandRows, calcStrSpaceWidth, getNumFromSection,
 	getTreeDeepestLevel, sortTreeListData, treeDataTranslate, getRem } from '_c/libs/util';
@@ -274,10 +274,10 @@ export default new Vuex.Store({
 			if (type === NOT_LEAF_MAP[0]) { // 从接口获取数据
 				await dispatch('fetchExpandData', state.expandSpDataMap.get(label));
 				let divideResult = divideListIntoGroups(state.expandSpDataMap.get(label).data, LIMIT_NUM_EACH_LINE); // 分组
-				children = sliceExpandRows(divideResult, MORE_AREA); // 截断溢出的行数
+				children = sliceExpandRows(divideResult, state.expandSpDataMap.get(label).more); // 截断溢出的行数
 			} else if (type === NOT_LEAF_MAP[1]) { // 从本地获取
 				let divideResult = divideListIntoGroups(state.expandSpDataMap.get(label).data, LIMIT_NUM_EACH_LINE); // 分组
-				children = sliceExpandRows(divideResult, MORE_AREA); // 截断溢出的行数
+				children = sliceExpandRows(divideResult, state.expandSpDataMap.get(label).more); // 截断溢出的行数
 			} else {
 				// 按sort字段对展开列表进行排序
 				children.sort((a, b) => a.sort - b.sort);

@@ -816,14 +816,17 @@ export const EXPAND_SPECIAL_MAP = new Map([
 		data: [],
 		api: '/mobile/NewHotSpotStocks/allConceptData?source=sjksxg',
 		type: EXPAND_API_TYPE[0],
+		more: MORE_INDUSTRY,
 	}],
 	['概念', {
 		data: [],
 		api: '/mobile/NewHotSpotStocks/allConceptData?source=sjksxg',
 		type: EXPAND_API_TYPE[1],
+		more: MORE_NOVEL,
 	}],
 	['地区', {
 		data: AREA_DATA,
+		more: MORE_AREA,
 	}],
 ]);
 

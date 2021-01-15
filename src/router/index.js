@@ -8,7 +8,10 @@ const routes = [
     {
         path: '/',
         name: 'index',
-        component: Index
+        component: Index,
+        meta: {
+            title: '条件选股',
+        },
     },
     {
         path: '/strategyDetail',
@@ -16,12 +19,18 @@ const routes = [
         // route level code-splitting
         // this generates a separate chunk (about.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
-        component: () => import(/* webpackChunkName: "strategyDetail" */ '../views/StrategyDetail.vue')
+        component: () => import(/* webpackChunkName: "strategyDetail" */ '../views/StrategyDetail.vue'),
+        meta: {
+            title: '策略说明',
+        },
     },
     {
         path: '/searchList',
         name: 'SearchList',
-        component: () => import(/* webpackChunkName: "searchList" */ '../views/SearchList.vue')
+        component: () => import(/* webpackChunkName: "searchList" */ '../views/SearchList.vue'),
+        meta: {
+            title: '',
+        },
     },
 ];
 
