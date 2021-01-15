@@ -7,6 +7,11 @@ if (host.indexOf('ceshiai.iwencai.com') > -1 || host.indexOf('testm.10jqka.com.c
     baseUrl = '/unifiedwap';
 }
 
+let proUrl = '//ai.iwencai.com';
+if (process.env.NODE_ENV !== 'production') { // 开发环境走本地
+    proUrl = '';
+}
+
 /**
  *  展开概念、行业，获取子选项
  */
@@ -37,5 +42,5 @@ export const fetchRobotIndexApi = ({ query, simulateId }) => {
         query,
         simu_id: simulateId,
     };
-    return httpRequest('//ai.iwencai.com/index/robotindex/', data, config);
+    return httpRequest(proUrl + '/index/robotindex/', data, config);
 };

@@ -11,7 +11,6 @@
 
 <script>
 import { mapActions } from 'vuex';
-import { list } from '_c/config';
 import HeaderBar from '_c/components/base/HeaderBar.vue';
 
 export default {
@@ -32,12 +31,12 @@ export default {
     },
     methods: {
         ...mapActions([
-            'initTreeData',
+            'getConditionLists',
             'getStrategyLists',
         ]),
     },
     mounted() {
-        this.initTreeData(list);
+        this.getConditionLists();
         this.getStrategyLists();
     },
 }

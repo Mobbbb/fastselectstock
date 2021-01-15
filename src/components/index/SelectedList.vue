@@ -103,7 +103,7 @@ export default {
                 searchArr.push(item.query);
             });
 
-            jumpPage(getWapUrlByEnv(searchArr.join(' ')));
+            jumpPage(getWapUrlByEnv(searchArr.join(' ')), false, true);
         },
     },
 }
@@ -181,12 +181,17 @@ export default {
     .item-title{
         height: 21px;
         line-height: 21px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding-right: 16px;
     }
     .delete-icon{
         width: 16px;
         height: 16px;
         background: url("//i.thsi.cn/iwencai/xuangu/images/delete-icon.png");
         background-size: 100%;
+        flex-shrink: 0;
     }
     .block-height{
         height: 48px;

@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import { SPACE_MAP, LIMIT_NUM_EACH_LINE, NOT_LEAF_MAP, EXPAND_SPECIAL_MAP,
 	SELECTION_TYPE_MAP, EXPAND_API_TYPE, STRATEGY_NUM_EACH_PAGE } from '_c/config';
 import { divideListIntoGroups, sliceExpandRows, calcStrSpaceWidth, getNumFromSection,
-	getTreeDeepestLevel, sortTreeListData, treeDataTranslate, getRem } from '_c/libs/util';
+	getTreeDeepestLevel, treeDataTranslate, getRem } from '_c/libs/util';
 import { fetchExpandApi, fetchConfigListsApi, fetchRobotIndexApi } from '_c/api';
 
 Vue.use(Vuex)
@@ -99,10 +99,7 @@ export default new Vuex.Store({
 	actions: {
 		initTreeData({ state, commit, dispatch }, lists) {
 			// 将树结构拆分为，叶子节点和非叶子节点的列表结构
-			dispatch('splitTreeData', lists.data.tree);
-
-			// 将非叶子节点按sort字段与兄弟节点排序
-			commit('setOriginListsExceptLeaves', sortTreeListData(state.originListsExceptLeaves));
+			dispatch('splitTreeData', lists);
 
 			// 将非叶子节点的最后一级按字符串长度进行分行，3个单位长度为一行
 			dispatch('groupingRowData');
@@ -160,7 +157,6 @@ export default new Vuex.Store({
 
 			// 对叶子节点的父亲按一定规则进行分组，并存储至其祖父的键名下
 			Object.keys(parentsMap).forEach(key => {
-				parentsMap[key].sort((a, b) => a.sort - b.sort);
 				parentsMap[key] = divideListIntoGroups(parentsMap[key], LIMIT_NUM_EACH_LINE);
 			});
 
@@ -279,8 +275,6 @@ export default new Vuex.Store({
 				let divideResult = divideListIntoGroups(state.expandSpDataMap.get(label).data, LIMIT_NUM_EACH_LINE); // 分组
 				children = sliceExpandRows(divideResult, state.expandSpDataMap.get(label).more); // 截断溢出的行数
 			} else {
-				// 按sort字段对展开列表进行排序
-				children.sort((a, b) => a.sort - b.sort);
 				children = divideListIntoGroups(children, LIMIT_NUM_EACH_LINE); // 分组
 			}
 
@@ -360,8 +354,9 @@ export default new Vuex.Store({
 		 */
 		async getConditionLists({ commit, dispatch }) {
 			let lists = await dispatch('getConfigListsByType', 'wencaiCondition');
-			const { tree = {} } = lists;
-			return tree;
+			const { tree = [] } = lists;
+
+			dispatch('initTreeData', tree);
 		},
 
 		/**
