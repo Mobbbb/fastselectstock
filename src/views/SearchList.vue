@@ -51,7 +51,6 @@ export default {
 	},
 	methods: {
 		...mapMutations([
-			'updateHideAfterAnimationStatus',
 			'setRowHeightByKey',
 		]),
 		...mapActions([

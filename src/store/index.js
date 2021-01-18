@@ -15,7 +15,6 @@ export default new Vuex.Store({
 		originListsExceptLeaves: [], // 除叶子节点之外的节点
 		originTreeData: [], // 渲染节点的数据
 
-		needToHideAfterAnimation: false, // 收起动画结束后是否需要隐藏
 		expandMap: {}, // 条件选股展开列表的集合, key值格式为『分组的索引-行索引』
 		selectedMap: {}, // 选中的条件的集合, key值格式为『分组的索引-行索引-列索引』
 		rowHeightMap: {}, // 当前行高度的集合, key值格式为『分组的索引-行索引』
@@ -90,9 +89,6 @@ export default new Vuex.Store({
 		},
 		setStrategyComponents(state, data) {
 			state.strategyComponents = data;
-		},
-		updateHideAfterAnimationStatus(state, status) {
-			state.needToHideAfterAnimation = status;
 		},
 		setRowHeightByKey(state, { key, height }) {
 			Vue.set(state.rowHeightMap, key, height);
@@ -232,8 +228,6 @@ export default new Vuex.Store({
 			const { value } = expandItem;
 			const { expandKey } = state.expandMap[`${groupIndex}-${rowIndex}`] || {};
 			const changeExpandItem = value !== expandKey;
-
-			commit('updateHideAfterAnimationStatus', false);
 
 			if (changeExpandItem) {
 				// 更新展开数据

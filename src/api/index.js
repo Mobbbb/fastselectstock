@@ -44,5 +44,5 @@ export const fetchRobotIndexApi = ({ query, simulateId }) => {
         appName: 'fast_select_stock',
         logid: `jgy_${String(Math.random()).slice(2)}`,
     };
-    return httpRequest(proUrl + '/index/robotindex', data, config);
+    return httpRequest(proUrl + '/index/robotindex/', data, config);
 };

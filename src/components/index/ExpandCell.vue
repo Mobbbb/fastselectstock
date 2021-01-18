@@ -1,6 +1,6 @@
 <template>
-    <div class="expand-selection-item">
-        <div class="atom-item-wrap" @click="clickItem">
+    <div class="expand-selection-item" @click="clickItem">
+        <div class="atom-item-wrap">
             <div class="selection-atom-item">{{item.label}}</div>
             <div class="right-arrow" v-if="showArrow"></div>
         </div>
@@ -78,7 +78,7 @@ export default {
     .recommend-label{
         height: 14px;
         line-height: 14px;
-        font-size: 12px;
+        font-size: 11px;
         color: #B3B3B3;
         white-space: nowrap;
         overflow: hidden;

@@ -48,12 +48,12 @@ export default {
             let arr = [];
             Object.keys(this.selectedMap).forEach(key => {
                 if (this.selectedMap[key].isSelected) {
-                    const { parentTitle, label, type, value1, value2 } = this.selectedMap[key].selectedItem;
+                    const { parentTitle, label, type, value1, value2, unit } = this.selectedMap[key].selectedItem;
                     if (type === SELECTION_TYPE_MAP.INPUT) {
                         arr.push({
                             key,
-                            showQuery: `${parentTitle}${value1}-${value2}`,
-                            query: `${parentTitle}${value1}-${value2}`,
+                            showQuery: `${parentTitle}${value1}${unit}-${value2}${unit}`,
+                            query: `${parentTitle}${value1}${unit}-${value2}${unit}`,
                         });
                     } else if (type === SELECTION_TYPE_MAP.SELECT_DEFAULT) {
                         arr.push({

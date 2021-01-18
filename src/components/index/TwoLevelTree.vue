@@ -9,7 +9,7 @@
                           :rowIndex="String(rowIndex)"
                           :columnIndex="String(columnIndex)"
                           :item="item"
-                          @on-click="clickCell($event, row)">
+                          @on-click="clickCell($event, row, rows.length)">
                     </Cell>
                 </Col>
                 <ExpandSelections :groupIndex="groupIndex"
@@ -52,14 +52,12 @@ export default {
             'rowHeightMap',
             'expandMap',
             'selectedMap',
-            'needToHideAfterAnimation',
             'collapsedHeight',
         ]),
     },
     methods: {
         ...mapMutations([
             'showRangeInput',
-            'updateHideAfterAnimationStatus',
             'setRowHeightByKey',
         ]),
         ...mapActions([
@@ -89,8 +87,8 @@ export default {
                             columnIndex,
                             selectedItem,
                         });
-                        // 收起展开的节点
-                        this.collapsePresets(rowIndex);
+                        // 将父容器高度重置为收起状态的高度
+                        this.setHeightByRowIndex(rowIndex, this.collapsedHeight);
                     },
                 });
             } else if (SELECT_MAP.includes(selectedItem.type)) {
@@ -102,8 +100,8 @@ export default {
                     columnIndex,
                     selectedItem,
                 });
-                // 收起展开的节点
-                this.collapsePresets(rowIndex);
+                // 将父容器高度重置为收起状态的高度
+                this.setHeightByRowIndex(rowIndex, this.collapsedHeight);
             } else if (MORE_TYPE.includes(selectedItem.type)) {
                 // 跳转至列表选择页
                 this.$router.push({
@@ -123,8 +121,9 @@ export default {
          * @param rowIndex
          * @param columnIndex
          * @param rowData
+         * @param rowLength
          */
-        async clickCell({ expandItem, rowIndex, columnIndex }, rowData) {
+        async clickCell({ expandItem, rowIndex, columnIndex }, rowData, rowLength) {
             const currentExpandKey = expandItem.value;
             const { expandKey = "", expandIndex: isExpand } = this.expandMap[`${this.groupIndex}-${rowIndex}`] || {};
             const { isSelected } = this.selectedMap[`${this.groupIndex}-${rowIndex}-${columnIndex}`] || {};
@@ -143,9 +142,12 @@ export default {
             // 展开：先显示内部节点，然后将父容器的高度更新为内部节点的高度
             // 收起：先将父容器的高度重置为收起时的高度，然后在收起动画结束后隐藏内部节点
             if (expandKey === currentExpandKey && isExpand) { // 收起
-                this.collapsePresets(rowIndex);
+                // 将父容器高度重置为收起状态的高度
+                this.setHeightByRowIndex(rowIndex, this.collapsedHeight);
                 // 隐藏展开的节点，在transitionend中进行
             } else { // 展开
+                // 收起当前组内的所有展开行
+                this.resetAllRowHeightInGroup(rowLength);
                 // 显示展开的节点，并设置展开的数据
                 const indexConfig = { groupIndex: this.groupIndex, rowIndex, columnIndex, rowData };
                 await this.changeExpandListsShowStatus({ indexConfig, expandItem, isExpand: true });
@@ -154,21 +156,23 @@ export default {
             }
         },
         transitionend(rowIndex) {
-            if (this.needToHideAfterAnimation) {
+            // 高度已经收起的节点，将状态置为隐藏
+            if (this.rowHeightMap[`${this.groupIndex}-${rowIndex}`] === this.collapsedHeight) {
                 // 隐藏展开的节点，收起动作只依赖行号
                 const indexConfig = { groupIndex: this.groupIndex, rowIndex };
                 this.changeExpandListsShowStatus({ indexConfig, isExpand: false });
             }
         },
         /**
-         * @description 收起节点的前置操作
-         * @param rowIndex
+         * @description 收起当前组内的所有展开行
+         * @param rowLength 当前组的行数
          */
-        collapsePresets(rowIndex) {
-            // 收起动画结束后隐藏节点
-            this.updateHideAfterAnimationStatus(true);
-            // 将父容器高度重置为收起状态的高度
-            this.setHeightByRowIndex(rowIndex, this.collapsedHeight);
+        resetAllRowHeightInGroup(rowLength) {
+            for (let rowKey = 0; rowKey < rowLength; rowKey++) {
+                const { expandIndex: expandStatus } = this.expandMap[`${this.groupIndex}-${rowKey}`] || {};
+                // 将父容器高度重置为收起状态的高度
+                if (expandStatus) this.setHeightByRowIndex(rowKey, this.collapsedHeight);
+            }
         },
         /**
          * @description 更新指定行索引的高度，若未传staticHeight，将获取行节点的高度
