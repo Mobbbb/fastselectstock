@@ -358,3 +358,36 @@ export function throttle (fn, delay, mustRunDelay = 0) {
         }
     };
 }
+
+/**
+ * @description 跳转至分时页面
+ * @param code
+ * @param hqcode
+ * @param marketId
+ * @param domain
+ */
+export const gotoNativeStockPage = (code, marketId, domain="", hqcode="") => {
+    // domain（fund）
+    const fenShiMarketIdDic = {
+        "usstock": "usa",
+        "hkstock": "hk",
+        "foreign_exchange": "wh",
+    };
+    let jumUrl = "";
+    let finaCode = hqcode ? hqcode : code;
+    if (domain === "fund") {
+        jumUrl = 'https://fund.10jqka.com.cn/newmobile/' + code + '.html';
+    } else {
+        if (!marketId) {
+            let market = fenShiMarketIdDic[domain];
+            marketId = market ? market : "hs";
+        }
+
+        if (isInTHSApp()) {
+            jumUrl = "client://client.html?action=ymtz^stockcode=" + code + "^webid=2205" + '^marketid=' + marketId;
+        } else {
+            jumUrl = httpClient + '//m.10jqka.com.cn/stockpage/' + marketId + '_' + finaCode + '/#refCountId=R_55c0c070_428';
+        }
+    }
+    window.location.href = jumUrl;
+};

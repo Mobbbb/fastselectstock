@@ -2,14 +2,16 @@
     <PopView :widthNum="48">
         <div class="tips-layer">
             <div class="tips-title">{{tipsConfig.title}}</div>
-            <div class="tips-content-wrap">
-                <div class="tips-content">{{tipsConfig.content}}</div>
-                <template v-if="subTips.length">
-                    <div class="sub-tips-wrap" v-for="item in subTips">
-                        <div class="sub-tips-title"><span class="tips-point">·</span>{{tipsConfig.title}}{{item.label}}</div>
-                        <div class="sub-tips-content">{{item.remark}}</div>
-                    </div>
-                </template>
+            <div class="tips-content-wrap" @touchmove="touchmove">
+                <div class="tips-scroll-wrap" ref="tipsScrollWrap">
+                    <div class="tips-content">{{tipsConfig.content}}</div>
+                    <template v-if="subTips.length">
+                        <div class="sub-tips-wrap" v-for="item in subTips">
+                            <div class="sub-tips-title"><span class="tips-point">·</span>{{item.label}}</div>
+                            <div class="sub-tips-content">{{item.remark}}</div>
+                        </div>
+                    </template>
+                </div>
             </div>
             <div class="bottom-btn" @click="closeLayer">我知道了</div>
         </div>
@@ -36,10 +38,12 @@ export default {
         ]),
         subTips() {
             let subTips = [];
-            this.tipsConfig.subTips.forEach(item => {
-                if (item.remark && item.type !== 'input') {
-                    subTips.push(item);
-                }
+            this.tipsConfig.subTips.forEach(rowTips => {
+                rowTips.forEach(item => {
+                    if (item.remark && item.type !== 'input') {
+                        subTips.push(item);
+                    }
+                });
             });
             return subTips;
         },
@@ -50,6 +54,14 @@ export default {
         ]),
         closeLayer() {
             this.changeTipsLayerShowStatus(false);
+        },
+        touchmove() {
+            const contentMaxHeight = 240;
+            const tipsScrollWrap = this.$refs.tipsScrollWrap || {};
+            // 若弹框内未出现滚动条，阻止滚动穿透
+            if (tipsScrollWrap.offsetHeight < contentMaxHeight) {
+                e.preventDefault();
+            }
         },
     },
 }
