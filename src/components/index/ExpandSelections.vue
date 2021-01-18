@@ -6,8 +6,9 @@
             <div class="tips-icon" @click="clickTips"></div>
         </div>
         <Row v-for="(row, inCellRowIndex) in expandLists" :key="inCellRowIndex" :gutter="8" class="selection-atom-row-wrap">
-            <Col :span="item.spaceWidth * 8" v-for="item in row" :key="item.value">
-                <ExpandCell :item="item" @on-click="clickItem"></ExpandCell>
+            <Col :span="24 / row.length" v-for="item in row" :key="item.value">
+                <ExpandCell :item="item" @on-click="clickItem" v-if="item.label"></ExpandCell>
+                <div class="empty-block" v-else></div>
             </Col>
         </Row>
     </div>

@@ -20,7 +20,7 @@ module.exports = {
     productionSourceMap: false,
 
     devServer: {
-        proxy: 'http://ai.iwencai.com'
+        proxy: 'http://ceshiai.iwencai.com'
     },
 
     configureWebpack: {

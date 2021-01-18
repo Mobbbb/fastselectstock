@@ -11,6 +11,7 @@
 
 <script>
 import { MORE_TYPE } from '_c/config';
+import { recordTrackPoint } from '_c/libs/trackPoint';
 import RiseFallText from '_c/components/base/RiseFallText';
 
 export default {
@@ -40,6 +41,7 @@ export default {
     },
     methods: {
         clickItem() {
+            recordTrackPoint({ id: this.item.trackpoint });
             this.$emit('on-click', this.item);
         },
     },

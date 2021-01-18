@@ -9,6 +9,7 @@
 <script>
 import { mapState } from 'vuex';
 import { SELECTION_TYPE_MAP } from '_c/config';
+import { recordTrackPoint } from '_c/libs/trackPoint';
 
 export default {
     name: 'selection-item',
@@ -67,6 +68,7 @@ export default {
     },
     methods: {
         clickItem() {
+            recordTrackPoint({ id: this.item.trackpoint });
             this.$emit('on-click', {
                 expandItem: this.item,
                 groupIndex: this.groupIndex,

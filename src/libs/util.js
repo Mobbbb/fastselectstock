@@ -106,6 +106,44 @@ export function divideListIntoGroups(lists, limitNumEachLine) {
 }
 
 /**
+ * @description 将一维数组分为二维数组，一行最多3个最小单元，最少2个单元
+ * @param lists
+ * @returns {[]}
+ */
+export function dynamicGrouping(lists) {
+    const limitNumEachLine = 3;
+    const leastNumEachLine = 2;
+    let rows = []; // 行数组
+    let rowNum = 0; // 单行的单元格个数
+    let rowIndex = 0; // 行号
+    lists.forEach(item => {
+        const overNum = rows[rowIndex] && rows[rowIndex].length >= leastNumEachLine; // 当前行的单元格个数是否已满足要求
+        const unitItem = $.extend({}, item);
+        rowNum += unitItem.spaceWidth; // 累加当前行的单元格个数
+        // 当单元格的个数超过一行的限制时, 换行重新累加
+        if (rowNum > limitNumEachLine && overNum) {
+            rowNum = unitItem.spaceWidth;
+            rowIndex ++;
+        }
+        if (rows[rowIndex]) {
+            rows[rowIndex].push(unitItem);
+        } else {
+            rows[rowIndex] = [];
+            rows[rowIndex].push(unitItem);
+        }
+    });
+
+    if (rows.length) {
+        // 为最后一行填充占位单元格
+        for (let i = 0; i < limitNumEachLine - rowNum; i++) {
+            rows[rowIndex].push({ spaceWidth: 1 });
+        }
+    }
+
+    return rows;
+}
+
+/**
  * @description 截断溢出的行数，并将末尾元素替换成 more
  * @param divideResult
  * @param more

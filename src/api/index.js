@@ -7,7 +7,7 @@ if (host.indexOf('ceshiai.iwencai.com') > -1 || host.indexOf('testm.10jqka.com.c
     baseUrl = '/unifiedwap';
 }
 
-let proUrl = '//ai.iwencai.com';
+let proUrl = '//ms.10jqka.com.cn';
 if (process.env.NODE_ENV !== 'production') { // 开发环境走本地
     proUrl = '';
 }
@@ -41,6 +41,8 @@ export const fetchRobotIndexApi = ({ query, simulateId }) => {
         tag: '股价较低优质公司',
         query,
         simu_id: simulateId,
+        appName: 'fast_select_stock',
+        logid: `jgy_${String(Math.random()).slice(2)}`,
     };
-    return httpRequest(proUrl + '/index/robotindex/', data, config);
+    return httpRequest(proUrl + '/index/robotindex', data, config);
 };

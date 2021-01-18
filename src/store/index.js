@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import { SPACE_MAP, LIMIT_NUM_EACH_LINE, NOT_LEAF_MAP, EXPAND_SPECIAL_MAP,
 	SELECTION_TYPE_MAP, EXPAND_API_TYPE, STRATEGY_NUM_EACH_PAGE } from '_c/config';
 import { divideListIntoGroups, sliceExpandRows, calcStrSpaceWidth, getNumFromSection,
-	getTreeDeepestLevel, treeDataTranslate, getRem } from '_c/libs/util';
+	getTreeDeepestLevel, treeDataTranslate, getRem, dynamicGrouping } from '_c/libs/util';
 import { fetchExpandApi, fetchConfigListsApi, fetchRobotIndexApi } from '_c/api';
 
 Vue.use(Vuex)
@@ -30,6 +30,11 @@ export default new Vuex.Store({
 		strategyComponents: [], // 策略详情组件列表
 	},
 	mutations: {
+		emptyTreeData(state) {
+			state.leavesNodes = [];
+			state.leavesParents = [];
+			state.originListsExceptLeaves = [];
+		},
 		addLeavesNodes(state, nodes) {
 			state.leavesNodes.push(nodes);
 		},
@@ -38,9 +43,6 @@ export default new Vuex.Store({
 		},
 		addOriginListsExceptLeaves(state, data) {
 			state.originListsExceptLeaves.push(data);
-		},
-		setOriginListsExceptLeaves(state, data) {
-			state.originListsExceptLeaves = data;
 		},
 		setOriginTreeData(state, data) {
 			state.originTreeData = data;
@@ -98,6 +100,8 @@ export default new Vuex.Store({
 	},
 	actions: {
 		initTreeData({ state, commit, dispatch }, lists) {
+			commit('emptyTreeData');
+
 			// 将树结构拆分为，叶子节点和非叶子节点的列表结构
 			dispatch('splitTreeData', lists);
 
@@ -269,13 +273,13 @@ export default new Vuex.Store({
 			// 根据不同类型，从不同渠道获取数据
 			if (type === NOT_LEAF_MAP[0]) { // 从接口获取数据
 				await dispatch('fetchExpandData', state.expandSpDataMap.get(label));
-				let divideResult = divideListIntoGroups(state.expandSpDataMap.get(label).data, LIMIT_NUM_EACH_LINE); // 分组
+				let divideResult = dynamicGrouping(state.expandSpDataMap.get(label).data); // 分组
 				children = sliceExpandRows(divideResult, state.expandSpDataMap.get(label).more); // 截断溢出的行数
 			} else if (type === NOT_LEAF_MAP[1]) { // 从本地获取
-				let divideResult = divideListIntoGroups(state.expandSpDataMap.get(label).data, LIMIT_NUM_EACH_LINE); // 分组
+				let divideResult = dynamicGrouping(state.expandSpDataMap.get(label).data); // 分组
 				children = sliceExpandRows(divideResult, state.expandSpDataMap.get(label).more); // 截断溢出的行数
 			} else {
-				children = divideListIntoGroups(children, LIMIT_NUM_EACH_LINE); // 分组
+				children = dynamicGrouping(children); // 分组
 			}
 
 			// 设置展开数据并更新展开状态
@@ -353,10 +357,15 @@ export default new Vuex.Store({
 		 * @returns {Promise<{}>}
 		 */
 		async getConditionLists({ commit, dispatch }) {
+			// 先行渲染旧数据
+			let oldTree = localStorage.getItem('condition-lists') || '[]';
+			dispatch('initTreeData', JSON.parse(oldTree));
+
 			let lists = await dispatch('getConfigListsByType', 'wencaiCondition');
 			const { tree = [] } = lists;
 
 			dispatch('initTreeData', tree);
+			localStorage.setItem('condition-lists', JSON.stringify(tree));
 		},
 
 		/**
