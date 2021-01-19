@@ -263,7 +263,6 @@ export default {
         height: 20px;
         line-height: 20px;
         margin: 0 6px;
-        padding-bottom: 2PX;
         font-family: THSMoneyFont, "Helvetica Neue", Helvetica STHeiTi, sans-serif;
     }
     .search-btn{

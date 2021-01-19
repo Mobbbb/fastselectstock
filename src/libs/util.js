@@ -281,7 +281,11 @@ export const getUrlByEvn = (urlParams) => {
 
 export const getWapUrlByEnv = (query) => {
     let url = getUrlByEvn(isInTHSApp() ? WAP_THS_URL : WAP_WEB_URL);
-    if (query) url += `?q=${decodeURIComponent(decodeURIComponent(query))}`
+    let q = query;
+    try {
+        q = encodeURIComponent(encodeURIComponent(query));
+    } catch (e) {}
+    if (query) url += `?q=${q}`;
     return url;
 }
 

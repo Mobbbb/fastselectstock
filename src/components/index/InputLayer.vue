@@ -1,15 +1,24 @@
 <template>
     <PopView :widthNum="48">
-        <div class="input-layer">
+        <div class="input-layer" @touchmove.prevent>
             <div class="content-wrap">
                 <div class="content-title">自定义条件</div>
                 <div class="content-recommend" :class="index ? '' : 'black-font'" v-for="(item, index) in recommendList">
                     {{item}}
                 </div>
                 <div class="input-wrap">
-                    <NumberInput placeholder="请输入" v-model="value1" :unit="rangeInputConfig.unit"></NumberInput>
+                    <NumberInput @on-blur="onBlur"
+                                 placeholder="请输入"
+                                 v-model="value1"
+                                 :unit="rangeInputConfig.unit"
+                                 ref="numberInput">
+                    </NumberInput>
                     <span>到</span>
-                    <NumberInput placeholder="请输入" v-model="value2" :unit="rangeInputConfig.unit"></NumberInput>
+                    <NumberInput @on-blur="onBlur"
+                                 placeholder="请输入"
+                                 v-model="value2"
+                                 :unit="rangeInputConfig.unit">
+                    </NumberInput>
                 </div>
                 <div class="content-tips">{{rangeInputConfig.remark}}</div>
             </div>
@@ -23,6 +32,7 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex';
+import { getDeviceType } from "_c/libs/util";
 import PopView from '_c/components/base/PopView.vue';
 import NumberInput from '_c/components/base/NumberInput.vue';
 
@@ -71,6 +81,14 @@ export default {
                     this.rangeInputConfig.confirmCallback(this.value1, this.value2);
                 }
                 this.hideRangeInput();
+            }
+        },
+        onBlur() {
+            if (getDeviceType() === 'iPhone') {
+                this.$refs.numberInput.$el.scrollIntoView({
+                    block: 'end',
+                    behavior: 'auto',
+                });
             }
         },
     },
