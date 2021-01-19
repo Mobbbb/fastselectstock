@@ -93,6 +93,7 @@ export default {
     .content-recommend{
         color: #595959;
         margin-top: 8px;
+        word-break: break-all;
     }
     .black-font{
         color: #262626;

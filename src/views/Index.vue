@@ -1,13 +1,15 @@
 <template>
-    <div class="home-index" @scroll="scroll" ref="homeIndex">
-        <div class="main-title">新手选股</div>
-        <div class="main-title-tips">不知道怎么选？不妨试试以下条件</div>
-        <StrategyList></StrategyList>
+    <div class="home-index">
+        <div class="home-index-content" @scroll="scroll" ref="homeIndexContent">
+            <div class="main-title">新手选股</div>
+            <div class="main-title-tips">不知道怎么选？不妨试试以下条件</div>
+            <StrategyList></StrategyList>
 
-        <div class="main-title">指标选股</div>
-        <div class="main-title-tips">选择以下指标组成选股策略(可多选)</div>
-		<SelectionTree></SelectionTree>
-		<div class="statement">免责声明：本页面推荐的产品和信息基于人工智能算法模型，仅供投资者参考，不构成投资建议</div>
+            <div class="main-title">指标选股</div>
+            <div class="main-title-tips">选择以下指标组成选股策略(可多选)</div>
+            <SelectionTree></SelectionTree>
+            <div class="statement">免责声明：本页面推荐的产品和信息基于人工智能算法模型，仅供投资者参考，不构成投资建议</div>
+        </div>
         <SelectedList></SelectedList>
 
         <TipsLayer v-if="tipsConfig.isShow"></TipsLayer>
@@ -50,7 +52,7 @@ export default {
     },
     activated() {
         // 后退保持滚动高度
-        this.$refs.homeIndex.scrollTop = this.scrollHeight;
+        this.$refs.homeIndexContent.scrollTop = this.scrollHeight;
     },
     mounted() {
 
@@ -60,11 +62,14 @@ export default {
 
 <style scoped>
 	.home-index{
-		padding: 0 12px;
         height: 100%;
+	}
+    .home-index-content{
+        height: calc(100% - 48px);
+        padding: 0 12px;
         overflow: scroll;
         -webkit-overflow-scrolling: touch;
-	}
+    }
     .main-title{
         height: 22px;
         font-size: 18px;

@@ -43,7 +43,7 @@ export default {
 			this.isLoading = false;
 		},
 	},
-	mounted() {
+	activated() {
 		this.getStrategyDetail();
 	},
 }

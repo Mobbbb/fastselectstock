@@ -38,10 +38,14 @@ body {
 a{text-decoration: none;}
 
 @font-face {
-	font-family: DINMedium;
-	src: url('//i.thsi.cn/iwencai/pubrobot/font/DINMedium.ttf');
+	font-family: THSMoneyFont;
+	src: url('//i.thsi.cn/m/fonts/THSMoneyfont-Medium.ttf');
 }
 /*------------------@ global HTML Element style--------------------*/
+body,button,input,select,textarea {
+    font-family: "Helvetica Neue", Helvetica STHeiTi, sans-serif;
+}
+
 textarea:focus {
 	outline:none medium;
 	-webkit-tap-highlight-color: rgba(0,0,0,0);

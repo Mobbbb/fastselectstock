@@ -48,5 +48,6 @@ export default {
     }
     .app-body-wrap{
         height: calc(100% - 44px);
+        background: white;
     }
 </style>

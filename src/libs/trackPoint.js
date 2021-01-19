@@ -1,3 +1,3 @@
-export function recordTrackPoint({ id = '' }) {
-    window.hxmClickStat(id);
+export function recordTrackPoint({ id = '' }, ext = {}) {
+    window.hxmClickStat(id, ext);
 }

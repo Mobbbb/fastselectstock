@@ -6,8 +6,8 @@
                  :gutter="gutter"
                  :style="rowStyle(row.length, rowIndex)"
                  v-for="(row, rowIndex) in strategyLists" >
-                <Col :span="24 / row.length" v-for="item in row" :key="item.simulate_id">
-                    <div class="strategy-item-wrap" @click="clickStrategy(item)">
+                <Col :span="24 / row.length" v-for="(item, index) in row" :key="item.simulate_id">
+                    <div class="strategy-item-wrap" @click="clickStrategy(item, index)">
                         <div class="strategy-title">{{item.edit_name}}</div>
                         <div class="strategy-content">{{item.desc}}</div>
                     </div>
@@ -25,6 +25,7 @@
 <script>
 import { mapState } from 'vuex';
 import { getRem } from '_c/libs/util';
+import { recordTrackPoint } from '_c/libs/trackPoint';
 import { STRATEGY_NUM_EACH_PAGE } from '_c/config';
 import Row from '_c/components/grid/Row.vue';
 import Col from '_c/components/grid/Col.vue';
@@ -68,8 +69,9 @@ export default {
         },
     },
     methods: {
-        clickStrategy(item) { // 跳转策略详情页面
-            const { query, simulate_id } = item;
+        clickStrategy(item, index) { // 跳转策略详情页面
+            const { query, simulate_id, edit_name } = item;
+            recordTrackPoint({ id: `free_iwencai_kuaisu.cl.${index + 1}` }, { more: edit_name });
             this.$router.push({
                 name: 'StrategyDetail',
                 query: {

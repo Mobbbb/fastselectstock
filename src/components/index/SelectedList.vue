@@ -6,17 +6,19 @@
                 <div class="content-title">已选条件：{{selectedNum}}条</div>
                 <div class="close-icon" @click="expandOrCollapse"></div>
             </div>
-            <div class="selected-item-wrap">
-                <div class="selected-item" v-for="item in selectedTextArr">
-                    <div class="item-title">{{item.showQuery}}</div>
-                    <div class="delete-icon" @click="deleteItem(item.key)"></div>
+            <div class="selected-item-wrap" @touchmove="touchmove">
+                <div class="scroll-wrap" ref="scrollWrap">
+                    <div class="selected-item" v-for="item in selectedTextArr">
+                        <div class="item-title">{{item.showQuery}}</div>
+                        <div class="delete-icon" @click="deleteItem(item.key)"></div>
+                    </div>
                 </div>
             </div>
             <div class="block-height"></div>
         </div>
-        <div class="bottom-fixed-wrap">
-            <div class="bottom-left-wrap">
-                <div class="arrow-icon" :class="isExpandBlock ? 'collapse-icon' : ''" @click="expandOrCollapse"></div>
+        <div class="bottom-fixed-wrap" @touchmove.prevent>
+            <div class="bottom-left-wrap" @click="expandOrCollapse">
+                <div class="arrow-icon" :class="isExpandBlock ? 'collapse-icon' : ''"></div>
                 <div class="bottom-text">
                     <span>已选</span>
                     <span class="selected-num" :class="searchAble ? 'red-num' : ''">{{selectedNum}}</span>
@@ -31,7 +33,7 @@
 <script>
 import { mapState, mapMutations } from 'vuex';
 import { SELECTION_TYPE_MAP } from '_c/config';
-import { getWapUrlByEnv, jumpPage } from '_c/libs/util';
+import { getWapUrlByEnv, jumpPage, getRem } from '_c/libs/util';
 
 export default {
     name: 'selected-list',
@@ -85,7 +87,7 @@ export default {
             'updateSelectedMapByKey',
         ]),
         expandOrCollapse() {
-            if (!this.searchAble) return;
+            if (!this.searchAble && !this.isExpandBlock) return;
 
             this.isExpandBlock = !this.isExpandBlock;
         },
@@ -104,6 +106,14 @@ export default {
             });
 
             jumpPage(getWapUrlByEnv(searchArr.join(' ')), false, true);
+        },
+        touchmove(e) {
+            const contentMaxHeight = 224 * getRem();
+            const scrollWrap = this.$refs.scrollWrap || {};
+            // 若未出现滚动条，阻止滚动穿透
+            if (scrollWrap.offsetHeight < contentMaxHeight) {
+                e.preventDefault();
+            }
         },
     },
 }
@@ -156,6 +166,7 @@ export default {
         font-weight: bold;
         height: 21px;
         line-height: 21px;
+        font-family: THSMoneyFont, "Helvetica Neue", Helvetica STHeiTi, sans-serif;
     }
     .close-icon{
         width: 12px;
@@ -169,6 +180,9 @@ export default {
         -webkit-overflow-scrolling: touch;
         padding-bottom: 16px;
         box-sizing: border-box;
+    }
+    .scroll-wrap{
+        padding-top: 1px;
     }
     .selected-item{
         display: flex;
@@ -249,6 +263,8 @@ export default {
         height: 20px;
         line-height: 20px;
         margin: 0 6px;
+        padding-bottom: 2PX;
+        font-family: THSMoneyFont, "Helvetica Neue", Helvetica STHeiTi, sans-serif;
     }
     .search-btn{
         width: 125px;

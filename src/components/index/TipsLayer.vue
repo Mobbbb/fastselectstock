@@ -20,6 +20,7 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex';
+import { getRem } from '_c/libs/util';
 import PopView from '_c/components/base/PopView.vue';
 
 export default {
@@ -55,8 +56,8 @@ export default {
         closeLayer() {
             this.changeTipsLayerShowStatus(false);
         },
-        touchmove() {
-            const contentMaxHeight = 240;
+        touchmove(e) {
+            const contentMaxHeight = 240 * getRem();
             const tipsScrollWrap = this.$refs.tipsScrollWrap || {};
             // 若弹框内未出现滚动条，阻止滚动穿透
             if (tipsScrollWrap.offsetHeight < contentMaxHeight) {

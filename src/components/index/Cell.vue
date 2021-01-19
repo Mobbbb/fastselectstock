@@ -41,12 +41,12 @@ export default {
         selectedItem() {
             return this.selectedConfig.selectedItem || {};
         },
-        selectedValue() {
-            if (this.selectedItem.type === SELECTION_TYPE_MAP.INPUT) {
-                return `${this.selectedItem.value1}-${this.selectedItem.value2}`;
+        selectedValue() { // 选中的条件展示
+            const { value1, value2, unit, type, label } = this.selectedItem;
+            if (type === SELECTION_TYPE_MAP.INPUT) { // 输入类型的条件展示
+                return `${value1}${unit}-${value2}${unit}`;
             }
-
-            return this.selectedItem.label;
+            return label;
         },
         isSelected() {
             return this.selectedConfig.isSelected || false;
