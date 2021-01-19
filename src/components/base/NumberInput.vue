@@ -137,6 +137,7 @@ export default {
         border: 1px solid #ebebeb;
         box-sizing: border-box;
         outline: none;
+        font-size: 14px;
 
         -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
         -moz-user-focus: unset;

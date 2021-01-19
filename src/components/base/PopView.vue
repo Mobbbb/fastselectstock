@@ -3,6 +3,7 @@
         <div class="layer-mask" @touchmove.prevent></div>
         <div class="layer-content-wrap" :style="layerContentWidth">
             <slot></slot>
+            <div @touchmove.prevent :style="{ paddingBottom: `${bottomOffset}px` }"></div>
         </div>
     </div>
 </template>
@@ -41,7 +42,6 @@ export default {
                     right: 0,
                 }
             }
-            style.paddingBottom = `${this.bottomOffset}px`;
             return style;
         },
     },

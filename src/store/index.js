@@ -358,8 +358,10 @@ export default new Vuex.Store({
 			let lists = await dispatch('getConfigListsByType', 'wencaiCondition');
 			const { tree = [] } = lists;
 
-			dispatch('initTreeData', tree);
-			localStorage.setItem('condition-lists', JSON.stringify(tree));
+			if (tree.length) { // 若请求到了合法数据，就使用接口的数据
+				localStorage.setItem('condition-lists', JSON.stringify(tree));
+				dispatch('initTreeData', tree);
+			}
 		},
 
 		/**
