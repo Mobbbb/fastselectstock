@@ -116,7 +116,7 @@ export default {
     .tips-arrow-icon{
         width: 16px;
         height: 7px;
-        background: url("//i.thsi.cn/iwencai/xuangu/images/tips-arrow.png");
+        background: url("../../assets/tips-arrow.png");
         background-size: 100%;
         position: absolute;
         top: -7px;
@@ -135,7 +135,7 @@ export default {
     .tips-icon{
         width: 16px;
         height: 16px;
-        background: url("//i.thsi.cn/iwencai/xuangu/images/tips-icon.png");
+        background: url("../../assets/tips-icon.png");
         background-size: 100%;
         margin-left: 2px;
     }

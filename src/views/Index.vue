@@ -1,14 +1,13 @@
 <template>
     <div class="home-index">
         <div class="home-index-content" @scroll="scroll" ref="homeIndexContent">
-            <div class="main-title">新手选股</div>
+            <!-- <div class="main-title">推荐</div>
             <div class="main-title-tips">不知道怎么选？不妨试试以下条件</div>
-            <StrategyList></StrategyList>
+            <StrategyList></StrategyList> -->
 
-            <div class="main-title">指标选股</div>
-            <div class="main-title-tips">选择以下指标组成选股策略(可多选)</div>
+            <div class="main-title">级联选择</div>
+            <div class="main-title-tips">选择以下指标(可多选)</div>
             <SelectionTree></SelectionTree>
-            <div class="statement">免责声明：本页面推荐的产品和信息基于人工智能算法模型，仅供投资者参考，不构成投资建议</div>
         </div>
         <SelectedList></SelectedList>
 

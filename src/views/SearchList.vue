@@ -132,7 +132,7 @@ export default {
 		padding: 6px 38px 5px 34px;
 		box-sizing: border-box;
 		background-color: white;
-		background-image: url("//i.thsi.cn/iwencai/xuangu/images/search_small.png");
+		background-image: url("../assets/search_small.png");
 		background-repeat: no-repeat;
 		background-size: 22px 22px;
 		background-position: 8px 5px;
@@ -146,7 +146,7 @@ export default {
 	.clear-icon{
 		width: 22px;
 		height: 22px;
-		background: url('//i.thsi.cn/iwencai/wencaiwap/close_icon.png');
+		background: url('../assets/close_icon.png');
 		background-size: 100%;
 		position: absolute;
 		right: 24px;

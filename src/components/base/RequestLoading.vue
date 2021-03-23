@@ -21,8 +21,7 @@ export default {
     .request_loading_bg{
         width: 150px;
         height: 48px;
-        background-image: url("//i.thsi.cn/iwencai/xuangu/images/webviewBackgroudLogo.png");
-        background-size: cover;
+        background: #e4e4e4;
         margin: 0 auto;
         position: relative;
         overflow: hidden;

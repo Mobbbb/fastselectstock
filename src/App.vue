@@ -37,7 +37,7 @@ export default {
     },
     mounted() {
         this.getConditionLists();
-        this.getStrategyLists();
+        // this.getStrategyLists();
     },
 }
 </script>

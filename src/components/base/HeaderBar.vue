@@ -1,7 +1,7 @@
 <template>
     <div class="header-bar">
         <span>{{title}}</span>
-        <div class="back-icon" @click="jumpBack"></div>
+        <div v-if="showBack" class="back-icon" @click="jumpBack"></div>
     </div>
 </template>
 
@@ -14,6 +14,10 @@ export default {
         title: {
             type: String,
             default: '',
+        },
+        showBack: {
+            type: Boolean,
+            default: false,
         },
     },
     computed: {
@@ -45,7 +49,7 @@ export default {
     .back-icon{
         width: 22px;
         height: 22px;
-        background: url("//i.thsi.cn/iwencai/wap/img/nav_back_new.png");
+        background: url("../../assets/nav_back_new.png");
         background-size: 100%;
         position: absolute;
         left: 16px;

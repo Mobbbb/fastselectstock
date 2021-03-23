@@ -25,7 +25,7 @@
                     <span>项</span>
                 </div>
             </div>
-            <div class="search-btn" :class="searchAble ? 'red-bg' : ''" @click="jumpToResult">开始选股</div>
+            <div class="search-btn" :class="searchAble ? 'red-bg' : ''" @click="consoleRes">输出结果</div>
         </div>
     </div>
 </template>
@@ -97,7 +97,7 @@ export default {
                 isSelected: false,
             });
         },
-        jumpToResult() {
+        consoleRes() {
             if (!this.searchAble) return;
 
             let searchArr = [];
@@ -105,7 +105,7 @@ export default {
                 searchArr.push(item.query);
             });
 
-            jumpPage(getWapUrlByEnv(searchArr.join(' ')), false, true);
+            console.log(searchArr);
         },
         touchmove(e) {
             const contentMaxHeight = 224 * getRem();
@@ -166,12 +166,11 @@ export default {
         font-weight: bold;
         height: 21px;
         line-height: 21px;
-        font-family: THSMoneyFont, "Helvetica Neue", Helvetica STHeiTi, sans-serif;
     }
     .close-icon{
         width: 12px;
         height: 12px;
-        background: url("//i.thsi.cn/iwencai/xuangu/images/close-icon.png");
+        background: url("../../assets/close-icon.png");
         background-size: 100%;
     }
     .selected-item-wrap{
@@ -203,7 +202,7 @@ export default {
     .delete-icon{
         width: 16px;
         height: 16px;
-        background: url("//i.thsi.cn/iwencai/xuangu/images/delete-icon.png");
+        background: url("../../assets/delete-icon.png");
         background-size: 100%;
         flex-shrink: 0;
     }
@@ -245,12 +244,12 @@ export default {
     .arrow-icon{
         width: 16px;
         height: 16px;
-        background: url("//i.thsi.cn/iwencai/xuangu/images/expand-arrow.png");
+        background: url("../../assets/expand-arrow.png");
         background-size: 100%;
         margin: 0 12px;
     }
     .collapse-icon{
-        background-image: url("//i.thsi.cn/iwencai/xuangu/images/collapse-arrow.png");
+        background-image: url("../../assets/collapse-arrow.png");
     }
     .bottom-text{
         display: flex;
@@ -263,7 +262,6 @@ export default {
         height: 20px;
         line-height: 20px;
         margin: 0 6px;
-        font-family: THSMoneyFont, "Helvetica Neue", Helvetica STHeiTi, sans-serif;
     }
     .search-btn{
         width: 125px;

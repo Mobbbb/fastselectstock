@@ -32,7 +32,7 @@ export const EXPAND_MAX_LINE = 6; // 展开的最大行数
 
 export const LIMIT_NUM_EACH_LINE = 3; // 一行的单元格个数
 
-export const STRATEGY_NUM_EACH_PAGE = 2; // 一页的策略页卡个数
+export const STRATEGY_NUM_EACH_PAGE = 2; // 一页的页卡个数
 
 // 特殊获取数据的类型集合
 export const NOT_LEAF_MAP = ['expand-api', 'expand-static'];
@@ -269,13 +269,13 @@ export const EXPAND_API_TYPE = ['field', 'novel'];
 export const EXPAND_SPECIAL_MAP = new Map([
 	['行业', {
 		data: [],
-		api: '/mobile/NewHotSpotStocks/allConceptData?source=sjksxg',
+		api: '/mock/api/hy',
 		type: EXPAND_API_TYPE[0],
 		more: MORE_INDUSTRY,
 	}],
 	['概念', {
 		data: [],
-		api: '/mobile/NewHotSpotStocks/allConceptData?source=sjksxg',
+		api: '/mock/api/gn',
 		type: EXPAND_API_TYPE[1],
 		more: MORE_NOVEL,
 	}],
@@ -286,11 +286,11 @@ export const EXPAND_SPECIAL_MAP = new Map([
 ]);
 
 export const WAP_WEB_URL = {
-	prod: '//www.iwencai.com/unifiedmobile/',
-	test: '//ceshiai.iwencai.com/unifiedmobile/',
+	prod: 'prod.com',
+	test: 'test.com',
 };
 
 export const WAP_THS_URL = {
-	prod: '//search.10jqka.com.cn/unifiedmobile/',
-	test: '//testm.10jqka.com.cn/unifiedmobile/',
+	prod: 'prod.com',
+	test: 'test.com',
 };

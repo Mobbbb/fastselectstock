@@ -5,6 +5,7 @@ import { SPACE_MAP, LIMIT_NUM_EACH_LINE, NOT_LEAF_MAP, EXPAND_SPECIAL_MAP,
 import { divideListIntoGroups, sliceExpandRows, calcStrSpaceWidth, getNumFromSection,
 	getTreeDeepestLevel, treeDataTranslate, getRem, dynamicGrouping } from '_c/libs/util';
 import { fetchExpandApi, fetchConfigListsApi, fetchRobotIndexApi } from '_c/api';
+import mockData from '_c/mock/mock.js';
 
 Vue.use(Vuex)
 
@@ -15,7 +16,7 @@ export default new Vuex.Store({
 		originListsExceptLeaves: [], // 除叶子节点之外的节点
 		originTreeData: [], // 渲染节点的数据
 
-		expandMap: {}, // 条件选股展开列表的集合, key值格式为『分组的索引-行索引』
+		expandMap: {}, // 展开列表的集合, key值格式为『分组的索引-行索引』
 		selectedMap: {}, // 选中的条件的集合, key值格式为『分组的索引-行索引-列索引』
 		rowHeightMap: {}, // 当前行高度的集合, key值格式为『分组的索引-行索引』
 		collapsedHeight: 58 * getRem(), // 单行收起时的高度
@@ -25,8 +26,8 @@ export default new Vuex.Store({
 
 		expandSpDataMap: EXPAND_SPECIAL_MAP, // 特殊的展开项集合（行业、概念、地区）
 
-		strategyLists: [], // 新手策略列表
-		strategyComponents: [], // 策略详情组件列表
+		strategyLists: [], // 推荐列表
+		strategyComponents: [], // 详情页组件列表
 	},
 	mutations: {
 		emptyTreeData(state) {
@@ -42,6 +43,12 @@ export default new Vuex.Store({
 		},
 		addOriginListsExceptLeaves(state, data) {
 			state.originListsExceptLeaves.push(data);
+		},
+		sortLeavesParents(state) {
+			state.leavesParents.sort((a, b) => a.sort - b.sort);
+		},
+		sortOriginListsExceptLeaves(state) {
+			state.originListsExceptLeaves.sort((a, b) => a.sort - b.sort);
 		},
 		setOriginTreeData(state, data) {
 			state.originTreeData = data;
@@ -144,6 +151,10 @@ export default new Vuex.Store({
 					}
 				});
 			});
+			
+			// 排序标题和选项
+			commit('sortOriginListsExceptLeaves');
+			commit('sortLeavesParents');
 
 			// 构造叶子节点的父亲与其祖父的对象映射
 			state.leavesParents.forEach(item => {
@@ -273,6 +284,7 @@ export default new Vuex.Store({
 				let divideResult = dynamicGrouping(state.expandSpDataMap.get(label).data); // 分组
 				children = sliceExpandRows(divideResult, state.expandSpDataMap.get(label).more); // 截断溢出的行数
 			} else {
+				children.sort((a, b) => a.sort - b.sort); // 排序展开项
 				children = dynamicGrouping(children); // 分组
 			}
 
@@ -324,14 +336,16 @@ export default new Vuex.Store({
 				if (EXPAND_API_TYPE.includes(value.type)) {
 					const newData = Object.assign({}, value);
 					newData.data = map[value.type] || [];
-					// 将行业、概念数据装入map
-					commit('setExpandSpDataMap', { key, data: newData });
+					if (newData.data.length) {
+						// 将行业、概念数据装入map
+						commit('setExpandSpDataMap', { key, data: newData });
+					}
 				}
 			}
 		},
 
 		/**
-		 * @description 获取策略列表
+		 * @description 获取配置列表
 		 * @param commit
 		 * @param dispatch
 		 * @returns {Promise<void>}
@@ -339,13 +353,13 @@ export default new Vuex.Store({
 		async getStrategyLists({ commit, dispatch }) {
 			let lists = await dispatch('getConfigListsByType', 'wencaiNoviceStrategy');
 			const { list = [] } = lists;
-			list.forEach(item => item.spaceWidth = 1); // 为策略单元格添加单元格宽度，供下一步分组使用
-			// 将策略以每2个为一组的方式分成二维数组
+			list.forEach(item => item.spaceWidth = 1); // 为单元格添加单元格宽度，供下一步分组使用
+			// 以每2个为一组的方式分成二维数组
 			commit('setStrategyLists', divideListIntoGroups(list, STRATEGY_NUM_EACH_PAGE));
 		},
 
 		/**
-		 * @description 获取选股条件配置
+		 * @description 获取级联数据配置
 		 * @param commit
 		 * @param dispatch
 		 * @returns {Promise<{}>}
@@ -355,8 +369,9 @@ export default new Vuex.Store({
 			let oldTree = localStorage.getItem('condition-lists') || '[]';
 			dispatch('initTreeData', JSON.parse(oldTree));
 
-			let lists = await dispatch('getConfigListsByType', 'wencaiCondition');
-			const { tree = [] } = lists;
+			// let lists = await dispatch('getConfigListsByType', 'wencaiCondition');
+			// const { tree = [] } = lists;
+			const tree = mockData;
 
 			if (tree.length) { // 若请求到了合法数据，就使用接口的数据
 				localStorage.setItem('condition-lists', JSON.stringify(tree));
@@ -375,7 +390,7 @@ export default new Vuex.Store({
 		},
 
 		/**
-		 * @description 根据策略id和问句,获取对应的结果页内容
+		 * @description 根据id和问句,获取对应的组件
 		 * @param commit
 		 * @param query
 		 * @param simulateId

@@ -10,7 +10,7 @@ const routes = [
         name: 'index',
         component: Index,
         meta: {
-            title: '条件选股',
+            title: '级联选择',
         },
     },
     {
@@ -21,7 +21,7 @@ const routes = [
         // which is lazy-loaded when the route is visited.
         component: () => import(/* webpackChunkName: "strategyDetail" */ '../views/StrategyDetail.vue'),
         meta: {
-            title: '策略说明',
+            title: '详情页',
         },
     },
     {

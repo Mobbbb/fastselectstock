@@ -11,7 +11,6 @@
 
 <script>
 import { MORE_TYPE } from '_c/config';
-import { recordTrackPoint } from '_c/libs/trackPoint';
 import RiseFallText from '_c/components/base/RiseFallText';
 
 export default {
@@ -41,7 +40,6 @@ export default {
     },
     methods: {
         clickItem() {
-            recordTrackPoint({ id: this.item.trackpoint });
             this.$emit('on-click', this.item);
         },
     },
@@ -72,7 +70,7 @@ export default {
     .right-arrow{
         width: 14px;
         height: 14px;
-        background: url("//i.thsi.cn/iwencai/xuangu/images/right-arrow.png");
+        background: url("../../assets/right-arrow.png");
         background-size: 100%;
     }
     .recommend-label{

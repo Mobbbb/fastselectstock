@@ -19,17 +19,13 @@ module.exports = {
     assetsDir: '',
     productionSourceMap: false,
 
-    devServer: {
-        proxy: 'http://ceshiai.iwencai.com'
-    },
-
     configureWebpack: {
         // provide the app's title in webpack's name field, so that
         // it can be accessed in index.html to inject the correct title.
         externals : {
             'vue': 'Vue'
         },
-        name: '快速选股',
+        name: '级联选择',
         resolve: {
             alias: {
                 '_c': resolve('src'),

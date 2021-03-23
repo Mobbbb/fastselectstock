@@ -77,11 +77,11 @@ export default {
     .group-collapse-icon{
         width: 14px;
         height: 14px;
-        background: url("//i.thsi.cn/iwencai/xuangu/images/up-arrow.png");
+        background: url("../../assets/up-arrow.png");
         background-size: 100%;
     }
     .group-expand-icon{
-        background-image: url("//i.thsi.cn/iwencai/xuangu/images/down-arrow.png");
+        background-image: url("../../assets/down-arrow.png");
     }
     .two-level-tree{
         padding-bottom: 8px;
