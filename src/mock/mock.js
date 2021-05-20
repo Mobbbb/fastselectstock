@@ -334,7 +334,7 @@ export default [
             },
             {
                 "remark": "数据从本地获取",
-                "label": "地区",
+                "label": "省市",
                 "sort": 2,
                 "type": "expand-static",
                 "value": "5fdc6e40ecf760015576f06877777",

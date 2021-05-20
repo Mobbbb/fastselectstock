@@ -6,21 +6,21 @@ export const SPACE_MAP = new Map([
 ]);
 
 export const MORE_AREA = {
-	"label": "更多地区",
+	"label": "查看全部",
 	"spaceWidth": 1,
 	"value": "-1",
 	"type": "more-area",
 };
 
 export const MORE_INDUSTRY = {
-	"label": "更多行业",
+	"label": "查看全部",
 	"spaceWidth": 1,
 	"value": "-2",
 	"type": "more-industry",
 };
 
 export const MORE_NOVEL = {
-	"label": "更多概念",
+	"label": "查看全部",
 	"spaceWidth": 1,
 	"value": "-3",
 	"type": "more-novel",
@@ -52,7 +52,7 @@ export const SELECTION_TYPE_MAP = {
 	"INPUT": "input", // 点击后弹出输入框弹窗
 	"SELECT": "select", // 点击后即选中，在最终问句中，此条件将带父标题
 	"SELECT_DEFAULT": "select-default", // 点击后即选中，在最终问句中，此条件将不带父标题
-	"MORE_AREA": MORE_AREA.type, // 更多地区的点击类型
+	"MORE_AREA": MORE_AREA.type, // 更多省市的点击类型
 	"MORE_INDUSTRY": MORE_INDUSTRY.type, // 更多行业的点击类型
 	"MORE_NOVEL": MORE_NOVEL.type, // 更多概念的点击类型
 };
@@ -279,7 +279,7 @@ export const EXPAND_SPECIAL_MAP = new Map([
 		type: EXPAND_API_TYPE[1],
 		more: MORE_NOVEL,
 	}],
-	['地区', {
+	['省市', {
 		data: AREA_DATA,
 		more: MORE_AREA,
 	}],

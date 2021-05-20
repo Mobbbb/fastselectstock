@@ -24,7 +24,7 @@ export default new Vuex.Store({
 		tipsConfig: {}, // 解释弹窗的数据
 		rangeInputConfig: {}, // 区间范围输入弹框
 
-		expandSpDataMap: EXPAND_SPECIAL_MAP, // 特殊的展开项集合（行业、概念、地区）
+		expandSpDataMap: EXPAND_SPECIAL_MAP, // 特殊的展开项集合（行业、概念、省市）
 
 		strategyLists: [], // 推荐列表
 		strategyComponents: [], // 详情页组件列表
@@ -246,7 +246,7 @@ export default new Vuex.Store({
 					key: `${groupIndex}-${rowIndex}`,
 					expandIndex: isExpand ? columnIndex : isExpand,
 					columnIndex,
-					expandItem,
+					expandItem, 
 					rowData,
 				});
 			} else {

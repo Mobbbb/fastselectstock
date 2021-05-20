@@ -33,7 +33,7 @@ module.exports = {
         }
     },
     css: {
-        loaderOptions: {
+        /*loaderOptions: {
             postcss: {
                 plugins: [
                     require('postcss-pxtorem')({
@@ -42,6 +42,6 @@ module.exports = {
                     })
                 ]
             }
-        }
+        }*/
     }
 };

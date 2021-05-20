@@ -231,17 +231,17 @@ export function findBrothersComponents (context, componentName, exceptMe = true)
 }
 
 export const setRem = () => {
-    const htmlWidth = document.documentElement.clientWidth || document.body.clientWidth;
+    /*const htmlWidth = document.documentElement.clientWidth || document.body.clientWidth;
     let htmlDom = document.getElementsByTagName('html')[0];
 
-    htmlDom.style.fontSize = htmlWidth / 15 + 'px';
+    htmlDom.style.fontSize = htmlWidth / 15 + 'px';*/
 };
 
 export const getRem = () => {
     const htmlWidth = document.documentElement.clientWidth || document.body.clientWidth;
     let fontSize = htmlWidth / 15;
 
-    return fontSize / 25;
+    return 1; // fontSize / 25;
 };
 
 export const isInTHSApp = () => {
