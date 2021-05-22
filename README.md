@@ -1,4 +1,4 @@
-# fastselect
+# 级联选择组件
 
 ## Project setup
 ```
