@@ -1,4 +1,6 @@
-# 级联选择组件
+# 级联选择
+
+![avatar](./images/demo.gif)
 
 ## Project setup
 ```

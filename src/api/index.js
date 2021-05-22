@@ -1,7 +1,7 @@
 import httpRequest from '../libs/request';
 
 /**
- *  展开概念、行业，获取子选项
+ *  展开，获取子选项
  */
 export const fetchExpandApi = (url) => {
     const config = { dataType: 'json', type: 'get' };
@@ -9,14 +9,14 @@ export const fetchExpandApi = (url) => {
 };
 
 /**
- *  获取平台配置信息接口
+ *  获取列表接口
  */
 export const fetchConfigListsApi = (type) => {
     const config = { dataType: 'json', type: 'get' };
     const data = {
         type,
     };
-    return httpRequest('/unified-wap/conf/list', data, config);
+    return httpRequest('/list', data, config);
 };
 
 /**
@@ -31,5 +31,5 @@ export const fetchRobotIndexApi = ({ query, simulateId }) => {
         appName: '',
         logid: `jgy_${String(Math.random()).slice(2)}`,
     };
-    return httpRequest('/index/robotindex/', data, config);
+    return httpRequest('/components/', data, config);
 };
